@@ -1,0 +1,114 @@
+There are two steps required to analyze the CnCCalc data. First is to
+load the latest database.
+
+First you need to be logged into the computer running the CnCCalc
+database.  Please ask a systems adminstrator for help with this
+process. At this point, you should be looking a t a command prompt
+(usually that looks like
+[asmt@ip230-dhcp ~]$
+)
+
+To load the latest database, you need to enter the following command
+(/home/asmt/bin/load_new_db.sh), and hit enter. This looks like:
+[asmt@ip230-dhcp ~]$ /home/asmt/bin/load_new_db.sh
+ and you hit enter. 
+
+
+This shall take a while to grab, uncompress, and load the database.
+It drops the database current and current_exec; and loads the latest
+database into current and current_exec. It then goes and loads any
+preprocessed baseline tables into the database (it loads the planning
+baselines into the database "current", and it loads the execution
+baselines into the database "current_exec". The script looks into the
+working directory (/home/asmt/analysis_data) for preprocessed baseline
+tables.
+
+The next step is the actual analysis. A precursor to that is to
+determine the actual run ids of the baseline and the stressed cases we
+wish to analyze.
+
+
+The next step is to change the current directory to the directory we want to 
+dump the analysis data in. The command used to do this is called cd (short
+for change directory). For example,
+[asmt@ip230-dhcp ~]$ cd ~/analysis_data
+ (again, hit enter)
+[asmt@ip230-dhcp ~/analysis_data]$
+You shall notice that the command prompt changes.
+
+If you need to create a new set of baselines, or you are running an
+experiment that can not used the pre-processed baseline table (for
+example, the use case 3 runs), we need to line up the baselines that
+we want to use, and create the baseline tables. If your stressed case
+can use the pre-formatted baselines (either the planning of the
+execution baselines, skip the next step)
+
+Suppose the baseline run ids you want are 1, 3, and 48. Further
+suppose this is a non-execution scenario we are analyzing.
+[asmt@ip230-dhcp ~/analysis_data]$ ~/bin/analyze.sh -b 1 -b 3 -b 38 -dcurrent
+  and hit enter. This should create the planning baseline tables in
+  the database (assuming, of course that the runs 1, 3, and 48 were
+  planning baseline runs).
+
+If this was an execution use case, you would do:
+[asmt@ip230-dhcp ~/analysis_data]$ ~/bin/analyze.sh -b 1 -b 3 -b 38 -dcurrent_exec
+  and hit enter. This should create the execution baseline tables in
+  the database (assuming, of course that the runs 1, 3, and 48 were
+  execution baseline runs). 
+
+This shall take hours.
+
+Finally, we analyze the stress cases. Suppose your stress cases are
+46, 67 and 80.
+[asmt@ip230-dhcp ~/analysis_data]$ ~/bin/analyze.sh -s -dcurrent 46 67 80
+Note that -s is specified only once.
+
+This shall take hours again.
+
+
+(You could have combined the steps above:
+[asmt@ip230-dhcp ~/analysis_data]$ ~/bin/analyze.sh -b 1 -b 3 -b 38 -dcurrent 46 67 80
+
+
+	You can now look at the results by dumping the results
+ table. On the command line, you can do this:
+[asmt@ip230-dhcp ~/analysis_data]$ echo "select * from results;" | psql -U postgres current
+  or 
+[asmt@ip230-dhcp ~/analysis_data]$ echo "select * from results;" | psql -U postgres current_exec
+
+ 
+
+======================================================================
+This is not needed unless you want to create the summary tables in
+HTML format.
+
+To create the HTML files, we do the following:
+
+[asmt@ip230-dhcp ~/analysis_data]$ ~/bin/update-wiki.sh
+
+This shall create several files called runs0.new, runs1.new, runs2.new
+.... runs5.new (if the directory contained runs?.txt files from
+previous analyses, those shall be reused).
+
+move all the new files to the  txt version for the next step:
+[asmt@ip230-dhcp ~/analysis_data]$ rename new txt runs?.new
+
+Parse the logs from the runs:
+[asmt@ip230-dhcp ~/analysis_data]$ ~/bin/parse_logs.pl /mnt/archive/JTG/JTG-*/*.log;
+
+Rename the output files:
+[asmt@ip230-dhcp ~/analysis_data]$ rename out txt runs*.out;
+
+Parse the analysis data (denormalized stress table, and the results):
+[asmt@ip230-dhcp ~/analysis_data]$  ~/bin/parse_logs.pl */*_{stressed.sql,results.txt} ;
+
+Again, rename the data files:
+[asmt@ip230-dhcp ~/analysis_data]$  rename out txt runs*.out
+
+
+Finally, create the HTML files:
+[asmt@ip230-dhcp ~/analysis_data]$  ~/bin/wiki2html.pl
+
+And you are done.
+
+

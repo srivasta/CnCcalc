@@ -1,0 +1,601 @@
+#!/usr/bin/perl -w
+#                              -*- Mode: Cperl -*-
+# CnCcalc ---
+# Author           : Manoj Srivastava ( srivasta@leopard.internal.stdc.com )
+# Created On       : Mon Sep  9 15:28:48 2002
+# Created On Node  : leopard.internal.stdc.com
+# Last Modified By : Manoj Srivastava
+# Last Modified On : Fri Sep 27 15:26:56 2002
+# Last Machine Used: glaurung.green-gryphon.com
+# Update Count     : 91
+# Status           : Unknown, Use with caution!
+# HISTORY          :
+# Description      :
+#
+#
+
+require 5.002;
+use strict;
+
+use Socket;
+use IO::Handle;
+
+
+use Carp;
+use Getopt::Long;
+use Pod::Usage;
+
+($main::MYNAME     = $main::0) =~ s|.*/||;
+$main::Author      = "Manoj Srivastava";
+$main::AuthorMail  = "manoj.srivastava\@stdc.com";
+$main::Version     = '$Revision: 1.21 $ ';
+
+my $usage = <<EOUSAGE;
+$main::MYNAME    $main::Version
+$main::Author <$main::AuthorMail>
+EOUSAGE
+
+my @required_tables = qw(
+			 allocation_results assets
+			 consolidated_aspects phased_aspects
+			 planelements preferences prepositions tasks
+			 runs status
+			);
+my %mode_handlers = ('new_run' => \&set_runline);
+
+
+=head1 NAME
+
+calc \- drive CnCcalc runs and analysis
+
+=cut
+
+=head1 SYNOPSIS
+
+CnCcalc [options] --database DB_NAME [mode]
+
+Currently, the only supported, and default, mode is: new_run.
+
+=head1 OPTIONS
+
+=over 1
+
+=item --help             Short usage message
+
+=item --man              Full manual page
+
+=item --batch            force batch mode. default: Off
+
+=item --nobatch          force interactive mode. default: ON
+
+=item --config_file FILE Read Configuration options from the file named.
+
+=item --database DB_NAME The name of the database. Required. No default.
+
+=item --description DESC Description for the run. default: "Robustness 1"
+
+=item --experiment  NAME Set the experiment name. default: Robustness_1
+
+=item --force-abort      Force all finished runs to be marked as aborted
+
+=item --noforce-abort    Mark all finished runs as done default: ON
+
+=item --hostname    HOST The database server host. default:localhost.
+
+=item --pass             Force asking for the database password. Default: Off
+
+=item --nopass           Assume no password is required. default: On
+
+=item --type    TYPE     Typically base or stress.          default:base
+
+=item --user USER        The database user. Default: UNIX username of invoker
+
+=cut
+
+=head1 DESCRIPTION
+
+This file drives the creation of the runs, and the subsequent analysis
+of the data collected.
+
+
+=cut
+
+
+=head1 OPTION DETAILS
+
+=over 4
+
+
+=item B<--help>
+
+Short usage message
+
+=item B<--man>
+
+Full manual page
+
+=item B<--noforce-abort>
+
+In the new run mode, CnCcalc marks all runs in the finished
+state as done. This is the default behaviour.
+
+=item B<--force-abort>
+
+Force CnCcalc to mark all finished (but not the done) runs as aborted,
+instead of the default "done".
+
+
+=item B<--batch>
+
+If given, force the script to be non interactive and take the default
+options. I<Default>: Off
+
+=item B<--nobatch>
+
+Force interactive mode. I<default>: ON
+
+=item B<--config_file> B<FILE>
+
+Read Configuration options from the named file B<FILE>. By default, we
+look for a file called CnCcalc.conf in the same directory where this
+script is found. Failing that, we replace any trailing /bin from the
+path, replace it with /configs, and again look for CnCcalc.conf.
+Failing that, we look for the file in the
+$COUGAAR_INSTALL_PATH/configs/assessment/CnCcalc.conf. Failing that,
+we look for $HOME/.cnccalcrc. Finally, if all else failed, we look for
+/etc/cnccalc.conf. We have not found a configuration file in any of
+these locations, we use the built in defaults.
+
+The Configuration file is actually a full perl library, and so has a
+fairly specific format. The advantage, of course, is flexibility; one
+may execute any code that one desires at configuration time. The
+configuration file, then, contains lines of the form
+
+$main::Config{'Configuration Parameter'} = 'Value';
+
+and ends:
+
+1;
+
+=item B<--database> B<DB_NAME>
+
+The name of the database. This is a B<Required> parameter, and must be
+set in the configuration file, or be specified on the command
+line. There is no default.
+
+=item B<--description> B<DESC>
+
+A short string describing the run.
+
+=item B<--experiment> B<NAME>
+
+Set the experiment name. I<Default>: Robustness_1
+
+=item B<--hostname> B<HOST>
+
+The hostname that the database is running on (can be an IP
+address). The default is to assume that the database is running on
+the local host.
+
+=item B<--pass>
+
+Force asking for the database password. I<Default>: Off
+
+=item B<--nopass>
+
+Assume that the user specified does not need a password to interact
+witht the database server.  I<Default>: On
+
+=item B<--type> B<TYPE>
+
+Typically I<base> or I<stress>. I<Default>: base
+
+=item B<--user> B<USER>
+
+The database user to use to connect to the database.  If no user is
+specified, the default is not to pass the user option to the
+database. This means the user running the script has to have the
+required permissions in the database.
+
+=back
+
+=cut
+
+=head1 Internal Implementation
+
+Here be dragons.
+
+=head2 init
+
+This routine initializes the various variables and configuration
+options used in the script. This is where we load the configuration
+file/library, optionally given as a command line parameter, or
+searched for from a built in default set.
+
+
+=cut
+
+sub init {
+  my %params = @_;
+  $main::Config{'Home'} = $ENV{HOME} || $ENV{LOGNAME} || (getpwuid($>))[7] ;
+
+  $main::0 =~ m|(.*)/|;
+  $main::Config{'Full Path'} = $1 if -d $1;
+  $main::Config{'Config Path'} = $main::Config{'Full Path'};
+  $main::Config{'Config Path'} =~ s/bin/configs/
+    if $main::Config{'Config Path'};
+  if (exists $params{'config_file'} && -r $params{'config_file'}) {
+    $main::Config{'Config File'} = $params{'config_file'};
+  }
+  elsif (-d $main::Config{'Full Path'} &&
+	 -r "$main::Config{'Full Path'}/CnCcalc.conf") {
+    $main::Config{'Config File'} = "$main::Config{'Full Path'}/CnCcalc.conf";
+  }
+  elsif (-d $main::Config{'Config Path'} &&
+	 -r "$main::Config{'Config Path'}/CnCcalc.conf") {
+    $main::Config{'Config File'} = "$main::Config{'Config Path'}/CnCcalc.conf";
+  }
+  elsif ($ENV{'COUGAAR_INSTALL_PATH'} &&
+	 -r $ENV{'COUGAAR_INSTALL_PATH'} . "/configs/assessment/CnCcalc.conf"){
+    $main::Config{'Config File'} = $ENV{'COUGAAR_INSTALL_PATH'} .
+      "/configs/assessment/CnCcalc.conf";
+  }
+  elsif (-r "$main::Config{'Home'}/.cnccalcrc") {
+    $main::Config{'Config File'} = "$main::Config{'Home'}/.cnccalcrc";
+  }
+  elsif (-r '/etc/cnccalc.conf') {
+    $main::Config{'Config File'} = '/etc/cnccalc.conf';
+  }
+
+  if ($main::Config{'Config File'}) {
+   my $ret = do "$main::Config{'Config File'}";
+    unless ($ret) {
+      print "[OUT]$main::MYNAME: Couldn't parse $main::Config{'Config File'}\n";
+      die "$main::MYNAME: Couldn't parse $main::Config{'Config File'}: $@" if $@;
+      die "$main::MYNAME: Couldn't do $main::Config{'Config File'}: $!"
+	unless defined $ret;
+      die "$main::MYNAME: Couldn't run $main::Config{'Config File'}" unless $ret;
+    }
+  }
+}
+
+=head2 main
+
+This is the top level routine in the script, and this is where the
+command line handling is done.
+
+=cut
+
+sub main {
+  my %Options = ();		# Options for the command
+  Getopt::Long::Configure ("bundling_override", "permute");
+  GetOptions (\%Options, 'help|?|h', 'man', 'batch!', 'user=s',
+	      'database=s', 'experiment=s', 'force-abort!', 'type=s',
+	      'hostname=s', 'description=s', 'pass!', 'config_file=s')
+    or pod2usage(2);
+
+  pod2usage(1) if $Options{'help'};
+  pod2usage(-exitstatus => 0, -verbose => 2) if $Options{'man'};
+  $main::Config{batch} = 1;
+
+  &init(%Options);
+  # Over ride the config file options with any that were given on the
+  # command line
+  foreach my $key (keys %Options) {
+    $main::Config{$key} = $Options{$key} if defined $Options{$key};
+  }
+  print "[OUT]$main::MYNAME: Need a Database name.\n"
+    unless $main::Config{'database'};
+  die "$main::MYNAME: Need a Database name.\n" 
+    unless $main::Config{'database'};
+  $main::Config{'type'} = "base" unless $main::Config{'type'};
+  $main::Config{'experiment'} = "Robustness_1"
+    unless $main::Config{'experiment'};
+  $main::Config{'description'} = "Robustness UC1"
+    unless $main::Config{'description'};
+  my @command = ();
+  push @command, '-U', "$main::Config{'user'}"
+    if $main::Config{'user'};
+  push @command, '-h', "$main::Config{'hostname'}"
+    if $main::Config{'hostname'};
+  push @command, '-p' if $main::Config{'pass'};
+  if ($#ARGV < 0) {
+    push @ARGV, 'new_run';
+  }
+  foreach my $mode (@ARGV) {
+    &{$mode_handlers{$mode}}('PSQL Options', \@command)
+      if exists $mode_handlers{$mode};
+  }
+  # Done
+  print STDOUT "$main::MYNAME: Finished processing.\n";
+}
+
+=head2 check_database
+
+This routine checks to ensure that the database exists.
+
+=cut
+
+sub check_database {
+  my %Params = @_;
+  my $cmd;
+  my $found = 0;
+
+  if (@{$Params{'PSQL Options'}}) {
+      $cmd = join(' ', '/usr/bin/psql', @{$Params{'PSQL Options'}});
+  }
+  else {
+     $cmd = '/usr/bin/psql';
+  }
+  open (TEST, "$cmd -l |");
+  while (<TEST>) {
+    chomp;
+    next if /^-+$/;
+    next if /^\s+Name/;
+    my ($database, $owner, $encoding) =
+      m/^\s+(\S+)\s+\|\s+(\S+)\s+\|\s+(\S+)/g;
+    next unless $database;
+    $found++ if $database =~ m/^\Q$main::Config{'database'}\E$/;
+  }
+  return $found;
+}
+
+=head2 create_database
+
+This routine creates a missing database
+
+=cut
+
+sub create_database {
+  my %Params = @_;
+  my $cmd = join(' ', '/usr/bin/psql', @{$Params{'PSQL Options'}});
+  my $found;
+
+  open (TEST, "| $cmd template1");
+  print TEST "create database $main::Config{'database'};\n";
+  close TEST;
+  return &check_database(%Params);
+}
+
+=head2 populate_db
+
+This routine populates an empty database with the table schemas.
+
+=cut
+
+sub populate_db {
+  my %Params = @_;
+  my $cmd = join(' ', '/usr/bin/psql', @{$Params{'PSQL Options'}});
+
+  if (-r $main::Config{'Full Path'} . "/CreateCnCPostgres.sql") {
+    open (NEWDB, "| $cmd $main::Config{'database'}") ||
+      die "$main::MYNAME: Could not connect to database $main::Config{'database'}: $!";
+    open(SQL, "$main::Config{'Full Path'}/CreateCnCPostgres.sql") ||
+      die "$main::MYNAME: Error reading $main::Config{'Full Path'}/CreateCnCPostgres.sql: $!";
+    while (<SQL>) {
+      chomp;
+      print NEWDB "$_\n";
+    }
+    close SQL;
+    close NEWDB;
+    return 1;
+  }
+  return 0;
+}
+
+=head2 set_runline
+
+This routine opens a connection to the database interface, and this is
+where the grunt work is done.
+
+=cut
+
+sub set_runline {
+  my %Params = @_;
+  my $pid;
+  my $line;
+
+  my $found = &check_database(%Params);
+  if (!$found) {
+    if ($main::Config{'batch'}) {
+      print "[OUT] The database $main::Config{'database'} does not exist\n";
+      die "ABORT: The database $main::Config{'database'} does not exist\n";
+    }
+    print STDERR "The database $main::Config{'database'} does not exist\n";
+    print STDERR "If this was not a typo, I can create it for you.\n";
+    print STDERR "Do you want me to create the database? [Ny]: ";
+    my $ans = <STDIN>;
+    if ($ans !~ /^y/i) {
+      die "$main::MYNAME: Could not find database $main::Config{'database'}\n"
+	unless $found;
+    }
+    $found = &create_database(%Params);
+    if (!$found) {
+      print "[OUT] Failed to create database\n";
+      die "Failed to create database\n";
+    }
+    my $filled = &populate_db(%Params);
+    if (!$filled) {
+      die "$main::MYNAME: Could not create tables. Please do so before starting the new run\n";
+    }
+  }
+
+  socketpair(CHILD, PARENT, AF_UNIX, SOCK_STREAM, PF_UNSPEC)
+    or die "$main::MYNAME: socketpair: $!";
+
+  CHILD->autoflush(1);
+  PARENT->autoflush(1);
+
+  if ($pid = fork) {		# In the parent
+    close PARENT;
+
+    # Test.
+    # print CHILD "Parent Pid $$ is sending this\n";
+    # chomp($line = <CHILD>);
+    # print STDERR "Parent Pid $$ just read this: $line\n";
+    my %Has_Tables = ();
+    # Do real work here
+    print CHILD "\\dt\n";
+    while (<CHILD>) {
+      chomp;
+      next if m/^\s+List of relations/g;
+      next if m/^\s+Name\s+/g;
+      next if /^-+/g;
+      last if m/\(\d+ rows?\)/g;
+      if (m/No relations found/) {
+	if (! $main::Config{'batch'}) {
+	  print STDERR "Hmm. Seems like this is an empty database.\n";
+	  print STDERR "I can populate it for you. Should I? [Yn]: ";
+	  my $ans = <STDIN>;
+	  if ($ans =~ /^n/i) {
+	    die "$main::MYNAME: Empty database $main::Config{'database'}\n";
+	  }
+	}
+	my $filled = &populate_db(%Params);
+	if (!$filled) {
+	  print "[OUT]" . "$main::MYNAME: Could not create tables. "
+	    . "Please do so before starting the run\n";
+	  die "$main::MYNAME: Could not create tables. Please do so before starting the run\n";
+	}
+	last;
+      }
+
+      my ($name, $type, $owner) =
+	m/^\s+(\S+)\s+\|\s+(\S+)\s+\|\s+(\S+)\s*/g;
+      next unless $name;
+      $Has_Tables{$name}++;
+    }
+    foreach my $table (@required_tables) {
+      print "[OUT]" . 
+	"$main::MYNAME: Database $main::Config{'database'} is missing " .
+	  "required table $table\n" unless $Has_Tables{$table};
+      die "$main::MYNAME: Database $main::Config{'database'} is missing " .
+	"required table $table\n" unless $Has_Tables{$table};
+    }
+    #print STDERR "Has all needed tables\n";
+    print CHILD "select count(*) from runs;\n";
+    my $rows = 0;
+    while (<CHILD>) {
+      chomp;
+
+      next if /^\s+count/;
+      last if m/^\((\d+) rows?\)/;
+      ($rows) = (m/^\s+(\d+)\s*/);
+    }
+    if ($rows == 0) {
+      print CHILD "insert into runs (id, status, type, experimentid, description) values ('1', '0', '$main::Config{type}', '$main::Config{experiment}', '$main::Config{description}');\n";
+      while (<CHILD>) {
+	chomp;
+	print STDERR "$_\n" unless $main::Config{'batch'};
+	last if m/^INSERT/;
+      }
+    }
+    else {
+      #print STDERR "Database has $rows entries\n"; 
+      # Well, Make sure all the old done runs are marked as such
+      # If we create status of 2 and 3, revisit this behaviour
+      if ($main::Config{'force-abort'}) {
+	print CHILD 
+	  "update runs set type='aborted' where  status in ('1', '2', '3');\n";
+	while (<CHILD>) {
+	  chomp;
+	  # print STDERR "$_\n" unless $main::Config{'batch'};
+	  last if m/^UPDATE/;
+	}
+      }
+
+      if ($main::Config{'force-abort'}) {
+	print CHILD 
+	  "update runs set status = '56' where  status in ('1', '2', '3');\n";
+      }
+      else {
+	print CHILD 
+	  "update runs set status = '100' where  status in ('1', '2', '3');\n";
+      }
+      while (<CHILD>) {
+	chomp;
+	# print STDERR "$_\n" unless $main::Config{'batch'};
+	last if m/^UPDATE/;
+      }
+
+      print CHILD "select count(*) from runs where status='0';\n";
+      while (<CHILD>) {
+	chomp;
+
+	next if /^\s+count/;
+	last if m/^\((\d+) rows?\)/;
+	($rows) = (m/^\s+(\d+)\s*/);
+      }
+      if ($rows != 0) {
+	if (! $main::Config{'batch'}) {
+	  print STDERR "Hmm. You have asked me to create a new run entry in the\n";
+	  print STDERR "database, but we alredy have $rows runs ready to go.\n\n";
+	  print STDERR "This is most certainly an error\n\n" if $rows > 1;
+	  print STDERR "You may chose to abort now and  use the entry present.\n\n"
+	    if $rows ==1;
+	  print STDERR "If you chose to continue, I can reset the entries,\n";
+	  print STDERR "and create a fresh entry for the new run.\n\n";
+	  print STDERR "Shall I abort now? [yN]: ";
+	  my $ans = <STDIN>;
+	  if ($ans =~ /^y/i) {
+	    exit 0;
+	  }
+	}
+
+	print CHILD "update runs set type = 'aborted' where status ='0';\n";
+	while (<CHILD>) {
+	  chomp;
+	  print STDERR "$_\n" unless $main::Config{'batch'};
+	  last if m/^UPDATE/;
+	}
+	print CHILD "update runs set status = '55' where status ='0';\n";
+	while (<CHILD>) {
+	  chomp;
+	  print STDERR "$_\n" unless $main::Config{'batch'};
+	  last if m/^UPDATE/;
+	}
+      }
+      print CHILD "select max(id) from runs;\n";
+      while (<CHILD>) {
+	chomp;
+	next if /^\s+max/;
+	
+	last if m/^\((\d+) rows?\)/;
+	($rows) = (m/^\s+(\d+)\s*/);
+      }
+      $rows++;
+      print CHILD "insert into runs (id, status, type, experimentid, description) values ('$rows', '0', '$main::Config{type}', '$main::Config{experiment}', '$main::Config{description}');\n";
+      while (<CHILD>) {
+	chomp;
+	print STDERR "$_\n" unless $main::Config{'batch'};
+	last if m/^INSERT/;
+      }
+    }
+    close CHILD;
+    waitpid($pid,0);
+  }
+  else {			# In the child
+    die "$main::MYNAME: cannot fork: $!" unless defined $pid;
+    close CHILD;
+
+    # Duplicate file dscriptors
+    open(STDIN, "<&PARENT")   || die "$main::MYNAME: can't dup pipe to stdin";
+    open(STDOUT, ">&PARENT")  || die "$main::MYNAME: can't dup pipe to stdout";
+
+    # Test.
+    # chomp($line = <>);
+    # print STDERR "Child Pid $$ just read this: $line\n";
+    # print "Child Pid $$ is sending this\n";
+
+    # Hmm. Fork and exec here
+    exec '/usr/bin/psql', @{$Params{'PSQL Options'}},
+      $main::Config{'database'};
+    warn "Exec returned!!. $!";
+    close PARENT;
+    exit;
+  }
+}
+
+&main;
+
+__END__

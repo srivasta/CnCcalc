@@ -1,0 +1,568 @@
+#!/usr/bin/perl -w
+#                              -*- Mode: Cperl -*- 
+# visualize.pl --- 
+# Author           : Manoj Srivastava ( srivasta@glaurung.green-gryphon.com ) 
+# Created On       : Thu Dec 11 00:06:06 2003
+# Created On Node  : glaurung.green-gryphon.com
+# Last Modified By : Manoj Srivastava
+# Last Modified On : Thu Dec 11 12:50:33 2003
+# Last Machine Used: glaurung.green-gryphon.com
+# Update Count     : 93
+# Status           : Unknown, Use with caution!
+# HISTORY          : 
+# Description      : 
+# 
+# 
+
+package DbUtils;
+use 5.008;
+use strict;
+use warnings;
+
+use Carp;
+use Parse::RecDescent;
+use Data::Dumper;
+use DBI;
+
+use vars qw($VERSION $Revision);
+$VERSION=qq$Version:$;
+
+$main::MYNAME = 'cnccalc' unless $main::MYNAME;
+$main::Author = 'Unknown' unless $main::Author;
+$main::Version = $VERSION unless $main::Version;
+$main::AuthorMail = " "   unless $main::AuthorMail;
+
+{  # scope for ultra-private meta-object for class attributes
+  my %DbUtils =
+    (
+     Optdesc  => {
+		  'help|h'       => sub {print Usage();      exit 0;},
+		  'man|m'        => sub {$::ConfOpts{"man"}        = "$_[1]";},
+		  'database|d=s' => sub {$::ConfOpts{"Data Base"}  = "$_[1]";},
+		  'dbhost=s'     => sub {$::ConfOpts{"DB Host"}    = "$_[1]";},
+		  'dbport=s'     => sub {$::ConfOpts{"DB Port"}    = "$_[1]";},
+		  'password|p=s' => sub {$::ConfOpts{"Pass Word"}  = "$_[1]";},
+		  'user|u=s'     => sub {$::ConfOpts{"User"}       = "$_[1]";},
+		  'runid|r=s'    => sub {$::ConfOpts{"RunID"}      = "$_[1]";},
+		  'scale!'       => sub {$::ConfOpts{"Scale"}      = "$_[1]";},
+     },
+     Usage    => qq(
+Author: $main::Author <$main::AuthorMail>
+Version $main::Version
+  where options are:
+ --help                This message.
+ --man                 Full manual page
+ --database NAME       DB Name  (default cnccalc)
+ --dbhost   HOST       DB Host  (default localhost)
+ --user     USER       DB USER  (default postgres)
+ --password String     password (default none)
+ --dbport   NUM        the port number to use (default none)
+ --runid    NUM        Required parameter, no default
+ --[no]scale           Turn on[off] scaling (default on)
+     ),
+     Defaults => {
+		  "Data Base"   => 'cnccalc',
+		  "User"        => 'postgres',
+		  "DB Host"     => '',
+		  "DB Port"     => '',
+		  'TRACE_SUBS'  => 0, # Trace program flow
+		  'LOG_INFO'    => 0, # Turn on additional informational messages
+		  'Scale'       => 1, # We scale by default
+		 },
+    );
+  for my $datum (keys %DbUtils ) {
+    no strict "refs";
+    *$datum = sub {
+      use strict "refs";
+      my ($self, $newvalue) = @_;
+      $DbUtils{$datum} = $newvalue if @_ > 1;
+      return $DbUtils{$datum};
+    }
+  }
+}
+
+sub new ($%) {
+  my $this = shift;
+  my %params = @_;
+  my $class = ref($this) || $this;
+  my $self = {};
+
+  warn "Creating new DbUtils Object" if $::ConfOpts{'TRACE_SUBS'};
+
+  bless $self, $class;
+
+  $self->{Dot_Dir}=$ENV{HOME} || $ENV{LOGNAME} || (getpwuid($>))[7] ;
+
+  $self->{' _Debug'} = 0;
+  my $defaults = $self->Defaults();
+  # Make sure runtime options override what we get from the config file
+  for my $option (keys %params) {
+    $self->{Con_Ref}->{"$option"} = $params{"$option"};
+  }
+  # Ensure that if default parameters have not been set on the comman
+  # line on in the configuration file, if any, we use the built in
+  # defaults.
+  for my $default (keys %$defaults) {
+    if (! defined $self->{Con_Ref}->{"$default"}) {
+      $self->{Con_Ref}->{"$default"} = $defaults->{"$default"};
+    }
+  }
+
+  return $self;
+}
+
+
+# The Hue Saturation Value (or HSV) model defines a color space in terms
+# of three constituent components; hue, saturation, and value. HSV is
+# used in color progression s.
+
+#     Hue , the color type (such as red, blue, or yellow);
+#       Measured in values of 0-360 by the central tendency of its
+#       wavelength (also called tint, or family).
+
+#     Saturation , the 'intensity' of the color (or how much greyness
+#       is present),
+#       Measured in values of 0-100% by the amplitude of the
+#       wavelength (also called shade or purity)
+
+#     Value , the brightness of the color.
+#       Measured in values of 0-100% by the spread of the wavelength
+#       (tone or intensity)
+
+# HSV is a non-linear transformation of the RGB color space .
+
+# The coordinate system is cylindrical, and the colors are defined
+# inside a hexcone. The hue value H runs from 0 to 360degrees. The
+# saturation S is the degree of strength or purity and is from 0 to
+# 1. Purity is how much white is added to the color, so S=1 makes the
+# purest color (no white).  Brightness V also ranges from 0 to 1, where
+# 0 is the black.
+
+sub RGBtoHSV ($$$) {
+  my $this = shift;
+  my ($r, $g, $b) = @_;
+  warn "DbUtils::RGBtoHSV" if $this->{Con_Ref}->{'TRACE_SUBS'};
+  my ($h, $s, $v);
+
+  my $min = $r < $g ? ($r < $b ? $r : $b) : ($g < $b ? $g : $b);
+  my $max = $r > $g ? ($r > $b ? $r : $b) : ($g > $b ? $g : $b);
+  my $delta = $max - $min;
+
+  $v   = $max;
+  if ($max) {
+    $s = $delta / $max;
+  }
+  else {
+    # s = 0, v is undefined
+    $s = 0;
+    $h = -1;
+    return ($h, $s, $v);
+  }
+  if ($r == $max) {
+    $h = ($g - $b) / $delta;	# between yellow & magenta
+  }
+  elsif ($g == $max) {
+    $h = 2 + ($b - $r) / $delta; # between cyan & yellow
+  }
+  else {
+    $h = 4 + ($r - $g) / $delta; # between magenta & cyan
+  }
+  $h *= 60;			# degrees
+  if ($h < 0) {
+    $h += 360;
+  }
+  return ($h, $s, $v);
+}
+
+sub HSVtoRGB ($$$) {
+  my $this = shift;
+  my ($h, $s, $v) = @_;
+  my ($r, $g, $b);
+  warn "DbUtils::HSVtoRGB" if $this->{Con_Ref}->{'TRACE_SUBS'};
+  if (! $s) {
+    # achromatic (grey)
+    $r = $g = $b = $v;
+    return ($r, $g, $b);
+  }
+
+
+  $h /= 60;			# sector 0 to 5
+  my $i = int($h);
+  my $f = $h - $i;
+  my $p = $v * (1 - $s);
+  my $q = $v * (1 - $s * $f);
+  my $t = $v * (1 - $s * (1 - $f));
+
+  if (! $i) {
+    $r = $v;
+    $g = $t;
+    $b = $p
+  }
+  elsif ($i == 1) {
+    $r = $q;
+    $g = $v;
+    $b = $p;
+  }
+  elsif ($i == 2) {
+    $r = $p;
+    $g = $v;
+    $b = $t;
+  }
+  elsif ($i == 3) {
+    $r = $p;
+    $g = $q;
+    $b = $v;
+  }
+  elsif ($i == 4) {
+    $r = $t;
+    $g = $p;
+    $b = $v;
+  }
+  else {
+    $r = $v;
+    $g = $p;
+    $b = $q;
+  }
+  return ($r, $g, $b);
+}
+
+sub connect_db ($@){
+  my $this = shift;
+  my %params = @_;
+  
+  die "Missing Database name" unless $params{'Data Base'};
+  warn "DbUtils::connect_db" if $this->{Con_Ref}->{'TRACE_SUBS'};
+  
+  return if $this->{'Connected'};
+  my $db_name = 'dbi:Pg:dbname=' . $params{'Data Base'};
+  $db_name .= ";host=" . $params{'DB Host'} if $params{'DB Host'};
+  $db_name .= ";port=" . $params{'DB Port'} if $params{'DB Port'};
+
+  eval {
+    $this->{'DB Handle'} =
+      DBI->connect_cached($db_name, $params{'User'}, $params{'Pass Word'},
+                          { RaiseError => 1, AutoCommit => 0 })
+        or die $DBI::errstr;
+  };
+  if ($@) {
+    return undef;
+  }
+  $this->{'Connected'} = 1;
+  return $this->{'DB Handle'};
+}
+
+sub disconnect_db ($@){
+  my $this = shift;
+  my %params = @_;
+
+  warn "DbUtils::disconnect_db" if $this->{Con_Ref}->{'TRACE_SUBS'};
+  return unless $this->{'Connected'};
+  $this->{'DB Handle'}->disconnect;
+  $this->{'Connected'} = 0;
+}
+
+sub installed_drivers {
+  my $this = shift;
+  my %params = @_;
+  warn "DbUtils::installed_drivers" if $this->{Con_Ref}->{'TRACE_SUBS'};
+
+  my @drivers = DBI->available_drivers();
+  die "No drivers found!\n" unless @drivers;
+  foreach my $driver (@drivers) {
+    print "Driver: $driver\n";
+    my @datasources = DBI->data_sources($driver);
+    foreach my $datasrc (@datasources) {
+      print "\tData Source is $datasrc\n" if $datasrc;
+    }
+    print "\n";
+  }
+}
+
+=head2 dump_config 
+
+This routine returns a C<Data::Dumper> for debugging purposes
+
+=cut
+
+sub dump_config {
+  my $this     = shift;
+  warn "DbUtils::dump_config" if $this->{Con_Ref}->{'TRACE_SUBS'};
+  return Data::Dumper->new([$this->{Con_Ref}]);
+}
+
+=head2 get_config_ref
+
+This routine returns a reference to the configuration hash
+
+=cut
+
+sub get_config_ref {
+
+  my $this     = shift;
+  warn "DbUtils::get_config_ref" if $this->{Con_Ref}->{'TRACE_SUBS'};
+  return $this->{Con_Ref};
+}
+
+sub create_data {
+  my $this = shift;
+  my %params = @_;
+  my $rows_affected =0;
+
+  warn "DbUtils::create_data" if $this->{Con_Ref}->{'TRACE_SUBS'};
+
+  my $dbh  = $this->connect_db( 
+			       'DB Host'   => $this->{Con_Ref}->{'DB Host'},
+			       'Data Base' => $this->{Con_Ref}->{'Data Base'},
+			       'User'      => $this->{Con_Ref}->{'User'},
+			       'Pass Word' => $this->{Con_Ref}->{'Pass Word'},
+			       'DB Port'   => $this->{Con_Ref}->{'DB Port'}
+			      );
+
+  if (! defined $dbh) {
+    die "Could not connect to the database:$!";
+  }
+  ### Create a new statement handle to fetch table information
+  my %HaveTable = ();
+  my $tabsth = $dbh->table_info();
+
+  ### Iterate through all the tables...
+  while ( my ( $qual, $owner, $name, $type ) =
+	  $tabsth->fetchrow_array() ) {
+    $HaveTable{$name}++;
+  }
+  $tabsth->finish;
+  if (! exists $HaveTable{'status'}) {
+    die "Could not find the table status\n";
+  }
+
+  my $statement = qq[CREATE TEMPORARY TABLE relevant AS
+  SELECT agent, hostname, total_tasks, logged_tasks, log_start, log_end,
+        (log_end - log_start)/1000.0 AS "interval",
+        logged_tasks * 1000.0 / (log_end - log_start) * 3600.0 AS "rate"
+  FROM status 
+  WHERE logged_tasks > 0
+    AND run_id = $this->{Con_Ref}->{'RunID'}
+  ORDER BY hostname;
+  ];
+  eval { $rows_affected = $dbh->do($statement); };
+  if ($@ || ! $rows_affected) { warn "Rows affected=$rows_affected:$@";}
+  else { $dbh->commit; }
+
+  my $sth = $dbh->prepare("SELECT COUNT(*) FROM relevant;");
+  $sth->execute();
+  my ($num_agents) = $sth->fetchrow_array;
+  $sth->finish();
+
+  $sth = $dbh->prepare("SELECT COUNT(DISTINCT hostname) FROM relevant;");
+  $sth->execute();
+  my ($num_host) = $sth->fetchrow_array;
+  $sth->finish();
+
+  $sth = $dbh->prepare("SELECT MAX(log_end) FROM relevant;");
+  $sth->execute();
+  my ($max_time) = $sth->fetchrow_array;
+  $sth->finish();
+
+  $sth = $dbh->prepare("SELECT MIN(log_start) FROM relevant;");
+  $sth->execute();
+  my ($min_time) = $sth->fetchrow_array;
+  $sth->finish();
+
+  $sth = $dbh->prepare("SELECT MAX(rate) FROM relevant;");
+  $sth->execute();
+  my ($max_rate) = $sth->fetchrow_array;
+  $sth->finish();
+
+  $sth = $dbh->prepare("SELECT MIN(rate) FROM relevant;");
+  $sth->execute();
+  my ($min_rate) = $sth->fetchrow_array;
+  $sth->finish();
+
+  my $range_time = $max_time - $min_time;
+  my $range_rate = $max_rate - $min_rate;
+  my $maxx = 0;
+  my $maxy = 0;
+  my $maxz = 0;
+
+  if ($this->{Con_Ref}->{Scale}) {
+    $maxx = $maxy = $maxz = 5000;
+  }
+  else {
+    $maxx = $maxy = $maxz = 
+      $range_time > $range_rate ? 1.1 * $range_time : 1.1 * $range_rate;
+  }
+  my $minx = $maxx/20;
+  my $miny = $maxy/20;
+  my $minz = $maxz/20;
+  $maxy = 2 * $minx  if $maxy < 2 * $minx;
+  $maxz = 2 * $minx  if $maxz < 2 * $minx;
+
+  my $xscale   = 1.0 * $maxx / $num_host; # Always normalized
+  my $yscale   = 1.0;
+  my $zscale   = 1.0;
+
+  if ($this->{Con_Ref}->{Scale}) {
+    $xscale   = 1.0 * $maxx / $num_host;  # Always normalized
+    $yscale   = 1.0 * $maxy / $range_time;
+    $zscale   = 1.0 * $maxz / $range_rate;
+  }
+  else {
+    $xscale   = 1.0 * $maxx / $num_host;  # Always normalized
+  }
+
+
+
+  print "VECT\n";
+  print $num_agents + 8, " ", 2 * $num_agents + 19, " ", $num_agents + 3, "\n";
+  print "\n";
+  print "2 2 2 2 2 3 2 4 ";
+  my $count = 8;
+  for (my $i = 1; $i <= $num_agents; $i++) {
+    print "2 ";
+    $count++;
+    if ($count >= 40) {
+      print "\n";
+      $count = 0;
+    }
+  }
+  print "\n";
+  print "\n";
+  print "1 0 0 1 0 0 1 0 ";
+  $count = 8;
+  for (my $i = 1; $i <= $num_agents; $i++) {
+    print "1 ";
+    $count++;
+    if ($count >= 40) {
+      print "\n";
+      $count = 0;
+    }
+  }
+  print "\n";
+  print "\n";
+
+  print "# X axis, offset by $minx $miny $minz \n";
+  print  -1 * $minx, "\t", -1 * $miny, "\t", -1 * $minz, "\t";
+  print 1.1 * $maxx, "\t", -1 * $miny, "\t", -1 * $minz, "\n\n";
+
+  print "# The letter X, offset by $minx $miny $minz \n";
+  print 1.1 * $maxx, "  ", -2 * $minx, "  ", -2 * $minx, "  ";
+  print 1.1 * $maxx, "  ",          0, "  ",          0, "\n";
+
+  print 1.1 * $maxx, "  ",          0, "  ", -2 * $minx, "  ";
+  print 1.1 * $maxx, "  ", -2 * $minx, "  ",          0, "\n\n";
+
+
+  print "# Y axis, offset by $minx $miny $minz \n";
+  print -1 * $minx, "\t",  -1 * $miny, "\t", -1 * $minz, "\t";
+  print -1 * $minx, "\t", 1.1 * $maxy, "\t", -1 * $minz, "\n\n";
+
+  print "# The letter Y, offset by $minx $miny $minz \n";
+  print -2 * $miny, "  ",  1.1 * $maxy, "  ",          0, "  ";
+  print -1 * $miny, "  ",  1.1 * $maxy, "  ", -1 * $miny, "\n";
+
+  print          0, "  ",  1.1 * $maxy, "  ",          0, "  ";
+  print -1 * $miny, "  ",  1.1 * $maxy, "  ", -1 * $miny, "  ";
+  print -1 * $miny, "  ",  1.1 * $maxy, "  ", -2 * $miny, "\n\n";
+
+  print "# Z axis, offset by $minx $miny $minz \n";
+  print -1 * $minx, "\t", -1 * $miny, "\t",  -1 * $minz, "\t";
+  print -1 * $minx, "\t", -1 * $miny, "\t", 1.1 * $maxz, "\n\n";
+
+  print "# The letter Z, offset by $minx $miny $minz \n";
+  print -2 * $minz, "  ",          0, "  ", 1.1 * $maxz, "  ";
+  print          0, "  ",          0, "  ", 1.1 * $maxz, "  ";
+  print -2 * $minz, "  ", -2 * $minz, "  ", 1.1 * $maxz, "  ";
+  print          0, "  ", -2 * $minz, "  ", 1.1 * $maxz, "\n\n";
+
+
+  print <<EOF;
+
+# X host count = $num_host
+# Y max time   = $max_time
+# Y min time   = $min_time
+# Y range      = $range_time
+# Z max rate   = $max_rate
+# Z min rate   = $min_rate
+# Z range      = $range_rate
+
+EOF
+  ;
+
+  $statement = qq[SELECT agent, hostname, log_start, log_end, rate
+   FROM relevant
+   ORDER BY hostname;
+  ];
+   eval {
+     my $sth = $dbh->prepare($statement);
+     $sth->execute();
+     $count = 0;
+     my @row = ();
+     my %seen = ();
+     while ( @row = $sth->fetchrow_array ) {
+       my $xval     = 0;
+       my $yval_one = 0;
+       my $yval_two = 0;
+       my $zval     = 0;
+
+       $count++ unless $seen{$row[1]}++ ;
+       print "# Host = $row[1] Agent = $row[0]\n";
+
+       $xval     =  $count               * $xscale;
+       $yval_one = ($row[2] - $min_time) * $yscale;
+       $yval_two = ($row[3] - $min_time) * $yscale;
+       $zval     = ($row[4] - $min_rate) * $zscale;
+
+       print "$xval \t $yval_one \t $zval\n";
+       print "$xval \t $yval_two \t $zval\n\n";
+     }
+   };
+
+  $this->disconnect_db();
+
+  print <<EOC;
+
+1 0 0 1
+0 1 0 1
+0 .6 1 1
+
+EOC
+  ;
+
+  $count = 0;
+  for (my $val = 0; $val < 360; $val += 359 / $num_agents) {
+    last if $count++ >= $num_agents;
+    print join "\t", $this->HSVtoRGB ($val, 0.8, 0.8), "\t0.8\n";
+  }
+
+}
+
+package main;
+use strict;
+require 5.002;
+use Getopt::Long;
+use Data::Dumper;
+use Pod::Usage;
+
+sub main {
+  my $optdesc  = DbUtils->Optdesc();
+  my $defaults = DbUtils->Defaults();
+
+  Getopt::Long::Configure ("bundling_override", "permute");
+  GetOptions (%$optdesc) or print "\n", DbUtils->Usage();
+  pod2usage(-exitstatus => 0, -verbose => 2) if $::ConfOpts{'man'};
+
+  die "Missing required parameter runid\n" unless $::ConfOpts{'RunID'};
+
+  my $calc    = DbUtils->new(%::ConfOpts);
+  my $confref = $calc->get_config_ref();
+
+  $calc->create_data();
+  printf STDERR "$main::Version. done\n";
+}
+
+
+&main();
+
+__END__
+
+1;

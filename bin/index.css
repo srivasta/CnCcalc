@@ -1,0 +1,595 @@
+/*
+ * Changing the defaults  
+ */
+
+
+address                  {
+
+; color: gray; 
+  margin-left: -2em;
+  text-align: right;
+}     
+
+
+body                     {
+  color: black;
+  link:  #18605a;
+  alink: #663300;
+  vlink: #996666;
+  background-color: white;
+  font-family: Helvetica, Times New Roman, Georgia, Minion Web, Book Antiqua, Utopia, serif;
+}
+
+small                    { font-size:      .92em;  }       
+big                      { font-size:      1.17em; }       
+
+pre                      {
+    color: maroon;
+    margin-left: 1em;
+    font-family: monospace
+    font-variant:   small-caps; 
+    font-weight: bold 
+}
+
+tt, code, kbd, samp      { font-family: monospace }
+
+/*
+ *   Effects
+ */
+
+.underline                { text-decoration:underline;    }
+.overline                 { text-decoration:overline;     }
+.obeylines-h,.obeylines-v { white-space: nowrap;          }
+.try                      { border:solid 4px;             }
+.name                     { font-size: 4em; align: center }
+.oops                     { font-family: Jester, "Comic Sans MS" }
+
+span.skip                 { display: none }
+div.skip                  { display: none }
+
+/*
+ * Create a Box around the matter
+ */
+
+div.box                  {
+  border: solid; 
+  border-width: 0.1em; 
+  padding: 0.5em;
+}
+
+/* 
+ * Link types
+ */
+
+A:link                   { color:  #18605a; }       
+A:visited                { color:  #996666; }       
+A:active                 { color:  #663300; }       
+A:hover                  { color:  #FC0;    }       
+
+a.normref                { color : red;     }       
+a.informref              { color : green;   }       
+A.offsite                { color:  #F60;    }       
+
+/*
+ * Ordered Lists
+ */
+
+ol.withroman             { list-style-type: lower-roman }
+ol.upperroman            { list-style-type: upper-roman }
+ol.upperalpha            { list-style-type: upper-alpha }
+ol.withalpha             { list-style-type: lower-alpha }
+
+li.serif      		 { font-family: Georgia, serif, Helvetica, }
+li.sans-serif 		 { font-family: Times New Roman, Helvetica, sans-serif 	}
+li.fantasy    		 { font-family: fantasy    	}
+li.monospace  		 { font-family: monospace  	}
+li.cursive    		 { font-family: cursive    	}    
+
+ul.padded                { line-height: 120%                  }
+li.overskrift            { margin-top: 2ex; font-weight: bold }
+
+/*
+ *   Alignment
+ */
+
+div.justify              { text-align: justify; }
+h1.center                { text-align: center;  }
+p.noindent               { text-indent: 0em     }
+p.indent                 { text-indent: 1.5em   }
+
+/*
+ *   Logical divisions
+ */
+
+/*
+ *   DocBook: Article
+ */
+
+/* div.article {  } */
+
+/*
+ *   DocBook: Appendix
+ */
+
+/* div.appendix {} */
+/* h1.appendix {} */
+
+/* div.article {  } */
+
+/*
+ *   DocBook: Authors
+ */
+
+/* div.authorgroup {} */
+h3.author                {
+	font-style: bold;
+    	margin: 2%;  	
+	text-align: center; 
+	font-style: italic;
+}
+
+/*
+ *   Abstracts
+ */
+
+div.abstract             { font-style: italic;  }
+
+/*
+ *   DocBook: Book
+ */
+
+/* body.book {  } */
+/* div.book {  } */
+
+
+/*
+ *   Copyright
+ */
+
+div.copyright, p.copyright {
+    font-style: bold;
+    margin: 5%;  
+}
+
+span.holder              {
+    font-family:            Times New Roman, Helvetica, Verdana, Myriad Web, Syntax, sans-serif;
+    font-size-adjust:       .53;
+
+
+.colophon                { display:        none; }  
+
+/*
+ *   Introduction
+ */
+
+div.intro                {
+    font-style: italic;
+    margin-left: 2em;
+    margin-right: 2em
+}
+
+div.intro EM             {
+    font-style: normal
+}
+
+div.intro H2             {
+    background: #fbfbff;
+    color: black;
+    border: none;
+}
+
+/*
+ *   Navigation
+ */
+
+div.navigation           {
+    font-size: smaller;
+    background: #E0E0E0 
+}
+
+p.navigation             {
+    font-family: Times New Roman, helvetica, Verdana, Myriad Web, Syntax, sans-serif; 
+    font-size: 80%; 
+    background: #e0e0e0;
+    margin-left: -3em;
+    padding: 0.3em 0.3em 0.3em 3em
+}
+
+/*
+ *   Table of Contents
+ */
+
+ul.toc                   { list-style-type: none; }
+div.toc,div.subtoc               {
+     padding: 1em;
+     border: solid thin;
+     margin: 1em 0;
+     background: #ddd
+}
+
+/*
+ *   Captions
+ */
+
+p.caption                { font-weight: bold;     }
+
+/*
+ *   To Be Decided
+ */
+
+p.tbd, div.tbd {
+    font-style: italic;
+    color: #800000;
+    font-size: smaller
+}
+div.tbd                  { margin: 1em            }
+
+/*
+ *   DocBook: Section
+ */
+
+/* div.section {} */
+h1.section               {
+     font-family: sans-serif, helvetica, Times New Roman, Verdana, Myriad Web, Syntax, sans-serif; 
+     text-transform: small-caps;
+}
+
+/*
+ *   Selections
+ */
+
+
+th.selected              { 
+	background: #E0E022; 
+	color: Blue 
+}
+
+
+
+/*
+ *   DocBook: Title
+ */
+
+div.titlepage            {
+     margin: 1em 0;
+     padding: 1em;
+     border:   solid thin;
+     border-color:   blue;
+}
+
+h1.title                 {
+         text-align: center; 
+   	 font-family: helvetica, Verdana, Myriad Web, Syntax, sans-serif; 
+         font-weight: bold; 
+         text-transform: small-caps
+}
+
+.titletext               {
+  color: black;
+  font-size: 18pt;
+  font-weight: bold;
+  xmargin-bottom: -10px;
+}
+
+/*
+ *   Notes
+ */
+
+
+div.note                 {
+    color: green;
+    margin-left: 1em;
+}
+
+p.note                   {
+    color: green;
+    margin-left: 1em;
+}
+
+P.pnote                  {
+  border-top: red thin solid;
+  border-bottom: red thin solid;
+  padding: 10px;
+}
+
+div.warning               {
+   margin-right: 8%;
+   margin-left:8%;
+   align-margin:justify; 
+   font-weight: bold; 
+   border:solid 1
+}
+DIV.output                { margin-left:3%; }
+
+.default                  { text-decoration: underline; font-style: normal }
+.required                 { font-weight: bold }
+
+.warning                  {       
+        text-transform: none;
+        font-style:     normal;
+        font-weight:    bolder;
+        background:     yellow;
+        color:  black;
+} 
+  
+ .footer {
+  margin-top: 2em;
+  padding-top: 1em;
+  border-top: solid thin black
+}
+   
+.warning strong {
+  color: #FF4500;
+  background: #FFD700;
+  text-decoration: none
+}
+
+.warning a:link, .warning a:visited, .warning a:active {
+  color: #FF4500;
+  background: transparent;
+  text-decoration: underline
+}
+
+.warning strong a:link, .warning strong a:visited, .warning strong a:active {
+  color: #FF4500;
+  background: #FFD700
+}
+
+.important                 {       
+        text-transform: none;
+        font-style:     normal;
+        font-weight:    bolder;
+        background:     white;
+        color:          red;
+}       
+
+/*
+ * Error
+ */
+
+.error {
+  color: #DC143C;
+  background: transparent;
+  text-decoration: none
+}
+
+.error strong {
+  color: #DC143C;
+  background: #FFD700;
+  text-decoration: none
+}
+
+.error a:link, .error a:visited, .error a:active {
+  color: #DC143C;
+  background: transparent;
+  text-decoration: underline
+}
+
+.error strong a:link, .error strong a:visited, .error strong a:active {
+  color: #DC143C;
+  background: #FFD700
+}
+
+
+p.tinytext                 {
+  border-top: black thin solid;
+  border-bottom: black thin solid;
+  padding: 8px;
+  font-size: 8pt;
+}
+
+.banner                    {
+  top: 0px;
+  position: absolute;
+  padding-right: 10px;
+  float: right;
+  width: 100%;
+  height=40px;
+  background-color: #EEEEEE;
+  text-align: right;
+}
+
+.banner img                { float: left; }
+
+/*
+ * Command bars
+ */
+.commandbar                {
+  position: absolute;
+  top: 40px;  
+  background-color: Navy;
+  height: 22px;
+  border: thin solid Black;  
+  width: 100%;  
+}
+
+.commandbar div             {
+  position: absolute;
+  color: white;
+
+}
+
+.commandbar div a           {
+  text-decoration: none;
+  font-size: 10pt;
+  color: White;
+  font-weight: bold;  
+}
+
+.commandbar div a:visited   {  color: white;  }
+.commandbar div a:hover     {  color: #3399FF }
+.cmdItem                    {  top: 1px;      }
+.cmdItemA                   {
+  border: thin solid White;  
+  top: -1px;
+  top-margin: -1px;
+  cursor: default;
+  font-size: 10pt;
+  color: White;
+  font-weight: bold;
+  height: 18px;
+}
+
+
+/*
+ *     Products
+ */
+span.productname         {
+        font-weight:    bold;
+}
+span.productnumber       {
+         font-style:     italic;
+}      
+
+/*
+ *     Outlines
+ */
+
+.outlineunder            {
+  position: absolute;
+  left: 0px;
+  background-color: #EEEEEE;
+  width: 150px;
+  border-right:black thin solid;
+  height: 100%;
+  top: 62px;
+
+}
+
+.outline                 {
+  position: absolute;  
+  top: 62px;
+  width: 150px;
+  padding-left: 15px;  
+  font-weight: bold;
+  font-family: Tahoma;
+  font-size: 11pt;
+  color: #003399;
+  height: 100%;
+  padding-top: 10px;
+
+}
+
+.outline div             {
+  padding-top: 5px;
+  padding-bottom: 3px;
+  padding-right: 6px;
+}
+
+.outline div a           {
+  text-decoration: none;  /*kill underlining of all menu links regardless of tie
+r*/
+  color: #003399;
+
+}
+
+.outline div A:visited   {  color: #003399; }
+.outline div a:hover     {  color: #3399FF; }
+
+/*
+ *   Examples
+ */
+
+div.example              {
+    width: 100%;
+    color: black;
+}
+
+tt.example               {
+    color: maroon;
+    margin-left: 1em;
+}
+
+
+div.illegal-example      {
+    width: 100%;
+    color: red;
+    border: solid red;
+}
+
+div.illegal-example p    { color: black; }
+
+div.deprecated-example   {
+    width: 100%;
+    color: red;
+    border: solid rgb(255,165,0); /* orange */
+}
+
+div.deprecated-example p { color: black; }
+
+
+
+/*
+ *   DTD's
+ */
+
+pre.dtd-fragment         { margin-left: 0;        }
+
+pre.dtd                  {
+    color: black;
+    margin-left: 0;
+}
+
+div.dtd-example          {
+    width: 100%;
+    color: black;
+}
+
+div.dtd-fragment         {
+    width: 100%;
+    border: none;
+    background-color: #eee;
+}
+
+
+/*
+ *    TeX based stuff
+ */ 
+
+.cmr-7                   {font-size:70%;                   	}
+.cmmi-10                 {font-style: italic;              	}
+.cmmi-7                  {font-size:70%;font-style: italic;	}
+.cmbx-10                 {font-weight: bold;               	}
+.cmtt-10                 {font-family: monospace;          	}
+.cmti-10                 {font-style: italic;              	}
+.small-caps              {font-variant: small-caps;        	}
+.hline hr, .cline hr     { height : 1px;                   	}
+.Canvas                  { position:relative;              	}    
+img.mathdisplay          { margin-top: 1em; margin-bottom: 1em; }
+
+.bugfixes                {
+   background: yellow;
+   padding:0.5em;
+   margin-left:70%;
+   text-align:center;
+   font-style: italic;
+   font-weight: bold; 
+}
+
+span.tex                  {letter-spacing: -0.125em; }
+span.tex span.e           { position:relative;top:0.5ex;left:-0.0417em;}
+a span.tex span.e         {text-decoration: none; }
+
+/* Century Schoolbook font is very similar to Computer Modern Math: cmmi */
+.math                     { font-family: "Century Schoolbook", serif; }
+.math i                   {
+    font-family: "Century Schoolbook", serif;
+    font-shape: italic 
+}
+.boldmath                 {
+    font-family: "Century Schoolbook", serif;
+    font-weight: bold 
+}
+
+/* implement both fixed-size and relative sizes */
+small.xtiny             { font-size : xx-small }
+small.tiny              { font-size : x-small  }
+small.scriptsize        { font-size : smaller  }
+small.footnotesize      { font-size : small    }
+small.small             {  }
+big.large               {  }
+big.xlarge              { font-size : large    }
+big.xxlarge             { font-size : x-large  }
+big.huge                { font-size : larger   }
+big.xhuge               { font-size : xx-large }
+

@@ -1,0 +1,6 @@
+cnccalc (0.01-1) unstable; urgency=low
+
+  * Initial Debian packaging.
+
+ -- Manoj Srivastava <manoj.srivastava@stdc.com>  Fri,  9 May 2003 06:35:02 -0500
+

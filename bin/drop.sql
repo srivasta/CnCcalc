@@ -1,0 +1,35 @@
+DROP TABLE runs;
+DROP TABLE tasks;
+DROP TABLE mp_tasks;
+DROP TABLE task_parent;
+DROP TABLE typepg;
+DROP TABLE itempg;
+DROP TABLE assets;
+DROP TABLE task_asset;
+DROP TABLE preferences;
+DROP sequence preferences_id_seq;
+DROP TABLE prepositions;
+DROP sequence prepositions_id_seq;
+DROP TABLE planelements;
+DROP TABLE allocation_results;
+DROP sequence allocation_results_id_seq;
+DROP TABLE aspectvalues;
+DROP sequence aspectvalues_id_seq;
+DROP TABLE consolidated_aspects;
+DROP TABLE phased_aspects;
+DROP TABLE phased_aspect_values;
+DROP TABLE baseline;
+DROP TABLE completion;
+DROP TABLE consolidated_aspects;
+DROP SEQUENCE consolidated_aspects_id_seq;
+DROP SEQUENCE phased_aspect_values_id_seq ;
+DROP SEQUENCE phased_aspects_id_seq       | 
+DROP TABLE root_1;
+DROP TABLE root_2;
+DROP TABLE root_2;
+DROP TABLE scoring_constants; 
+DROP TABLE squished_root_1;
+DROP TABLE squished_root_2;
+DROP TABLE squished_root_3;
+DROP TABLE stressed;
+

@@ -1,0 +1,73 @@
+1. Download the overlay SRI_cnc.zip and SRI_auto.zip from Ultralog CVS and 
+   Unzip it from your COUGAAR_INSTALL_PATH
+
+2. Before moving further one needs to setup database and acme service
+   to use that database. Following steps need to be performed for same.
+   A. Verify that Postgres server is installed on a database server machine and
+      configured for access from network. Else get rpms for postgrsql server and
+      install them and configure enable network.
+   B. Verify that Postgres client is installed on operator machine.
+      (i.e. Machine from which scripts will bw run), Try to connect to server
+      from this client using following command.
+      psql -h server_name -Upostgres -l
+      you will see a list of databases which currently exist.
+   C. Now change directory to $COUGAAR_INSTALL_PATH/CnCcalc/bin
+      and run following command, which will create the database and a entry in
+      runs table.
+      ./CnCcalc --hostname server_name --user postgres \
+                --database new_database_name --nobatch
+      This will prompt you "Do you want me to create the database? [Ny]:" if 
+      datbase  does not exist. reply y
+      You should see a entry in runs table with experimentid 'Robustness_1'.
+      You can see all the options by doing ./CnCcalc --help
+
+      If you are running experiment from a ruby script, following will set
+      ACME service plugin for CnCcalc.
+   D. Stop the ACME service on operator host if it is running.
+      Copy files cnccalc.rb and properties.yaml from 
+      csmart/assessment/lib/plugin directory in SRI_auto.zip overlay
+      to /usr/local/acme/plugins/acme_tic_cnccalc. Change the properties in 
+      properties.yaml to reflect your setup. Also Change autoload property to
+      true in plugin.yaml in same directory.
+   E. Start ACME service on operator host.
+      If you issue a command[help] from jabber client to operator host you should
+      see command[cnccalc_newrun] in the output.
+      Further you can issue command[cnccalc_newrun] from jabber client and a new 
+      run entry should be created in database with experimentid 'Robustness_1'.
+
+Note: Previous steps D, E are interim hack, till http based CnCcalc server is 
+      fully operational.
+
+2. Edit file $CIP/configs/CnCcalc/CnCcalcPostgresDatabase.xml to
+   reflect the settings for your Postgres database.
+
+3. Copy the last paragraph from file $CIP/configs/CnCcalc/logging.props to
+   the configs/commons/loggingConfig.conf file. This is the file
+   where the log4j categories and the appenders are defined.
+
+If you running experiment using do_action "LoadSocietyFromCSmart"
+in script do following 
+
+4.1 Edit your Linux.props file to add the following line:
+    org.cougaar.core.logging.log4j.appender.A4.File=/tmp/$hostname.CnCcalclog
+   Change the pathname to reflect the path where you would like the
+   log files to be created.
+
+4.2 Edit the following property in Linux.props
+   "org.cougaar.config.path" to add the $CIP/CnCcalc/configs
+   directory.
+
+4.3 Add the following property to Linux.props
+     com.stdc.CnCcalc.config.filename=CnCcalc.props
+
+4.4 Add configs/CnCcalcPlugin-recipe.sql to the recipes in
+   CSMART. Apply this recipe to the "All Agents not %Manage% not
+   %Agent%".  This query has already been created - called
+   recipeQueryNotManagementAgent ??.
+
+If you are using do_action "LoadSocietyFromCScript" equivalents for 4.1 to 4.4
+to create a script file.
+#Details to be written
+
+That's it. You are now ready to run the plugin and it will log
+the rootonly tasks in currently active run in the database.

@@ -1,0 +1,38 @@
+# This file is read by the CnCcalcPlugin in order to control its behavior
+#
+# This file will be found by the Plugin by using ConfigFinder which will look
+# for CnCcalc.props
+#
+# If using from Linux.props file, append the following in there
+# -Dorg.cougaar.config.path=$CIP/configs/CnCcalc
+# -Dcom.stdc.CnCcalc.config.filename=CnCcalc.props
+# OR
+# You can specify all the below mentioned properties in linux.props,
+# or on node command line by appending "com.stdc.CnCcalc." to them.
+# Properties on command line will over-ride entries from this file.
+###############################################################
+#If plugin.onlyRoot=true plugin only logs root level task.
+#set this to false to log all tasks.
+# default is true
+###############################################################
+plugin.onlyRoot=true
+
+###############################################################
+# Specify the jdbc url to access the database here.
+###############################################################
+database.url=jdbc:postgresql://cnccalc-db/cnccalc
+
+###############################################################
+# Specify user for the database, postgres is default
+###############################################################
+database.user=postgres
+
+###############################################################
+# Specify password for the user, Default no password.
+###############################################################
+#database.passwd=""
+
+###############################################################
+# Specify mapping file. Default is CnCcalcPostgresMapping.xml
+###############################################################
+database.mapping=CnCPgMapping.xml

@@ -1,0 +1,154 @@
+#! /usr/bin/make -f
+############################ -*- Mode: Makefile -*- ###########################
+## rules ---
+## Author           : Manoj Srivastava ( srivasta@tiamat.datasync.com )
+## Created On       : Wed Nov 20 16:07:20 1996
+## Created On Node  : tiamat.datasync.com
+## Last Modified By : Manoj Srivastava
+## Last Modified On : Fri May  9 06:34:14 2003
+## Last Machine Used: glaurung.green-gryphon.com
+## Update Count     : 46
+## Status           : Unknown, Use with caution!
+## HISTORY          :
+## Description      :
+##
+###############################################################################
+
+ifdef ARCH
+  ha:=-a$(ARCH)
+endif
+
+# set the dpkg-architecture vars
+export DEB_BUILD_ARCH      := $(shell dpkg-architecture $(ha) -qDEB_BUILD_ARCH)
+export DEB_BUILD_GNU_CPU   := $(shell dpkg-architecture $(ha) -qDEB_BUILD_GNU_CPU)
+export DEB_BUILD_GNU_SYSTEM:= $(shell dpkg-architecture $(ha) -qDEB_BUILD_GNU_SYSTEM)
+export DEB_BUILD_GNU_TYPE  := $(shell dpkg-architecture $(ha) -qDEB_BUILD_GNU_TYPE)
+export DEB_HOST_ARCH       := $(shell dpkg-architecture $(ha) -qDEB_HOST_ARCH)
+export DEB_HOST_GNU_CPU    := $(shell dpkg-architecture $(ha) -qDEB_HOST_GNU_CPU)
+export DEB_HOST_GNU_SYSTEM := $(shell dpkg-architecture $(ha) -qDEB_HOST_GNU_SYSTEM)
+export DEB_HOST_GNU_TYPE   := $(shell dpkg-architecture $(ha) -qDEB_HOST_GNU_TYPE)
+
+
+#
+# VERSION=$(shell LC_ALL=C dpkg-parsechangelog | grep ^Version: | \
+#                          sed 's/^Version: *//')
+#
+
+ifndef PERL
+PERL = /usr/bin/perl
+endif
+
+FILES_TO_CLEAN  = debian/files debian/buildinfo debian/substvars
+STAMPS_TO_CLEAN = stamp-configure stamp-build stamp-binary
+DIRS_TO_CLEAN   = debian/tmp
+thisdir=$(shell pwd)
+
+install_file=    install -p    -o root -g root -m 644
+install_program= install -p    -o root -g root -m 755
+make_directory=  install -p -d -o root -g root -m 755
+deb_rule = $(MAKE) -f $(thisdir)/debian/rules
+
+package = $(shell grep Source debian/control | sed 's/^Source: //')
+version= $(shell head -1 debian/changelog | \
+                 $(PERL) -nle 'm/\S+\s+\((\S+)\)/ && print $$1')
+
+SRCTOP  := $(shell if [ "$$PWD" != "" ]; then echo $$PWD; else pwd; fi;)
+TMPTOP  := $(SRCTOP)/debian/tmp
+PRIVLIB := $(shell $(PERL) -e 'use Config; print "$$Config{'privlibexp'}\n";')
+ARCHLIB := $(shell $(PERL) -e 'use Config; print "$$Config{'archlibexp'}\n";')
+VENDORLIB:=$(shell $(PERL) -e 'use Config; print "$$Config{'vendorlibexp'}\n";')
+DOCDIR  := $(TMPTOP)/usr/share/doc/$(package)
+DOCBASE := $(TMPTOP)/usr/share/doc-base
+MENUDIR := $(TMPTOP)/usr/lib/menu/
+MAN1DIR := $(TMPTOP)/usr/share/man/man1
+MAN3DIR := $(TMPTOP)/usr/share/man/man3
+LINTIANDIR:= $(TMPTOP)/usr/share/lintian/overrides
+
+INSTALLPRIVLIB := $(TMPTOP)/$(shell \
+               $(PERL) -e 'use Config; print "$$Config{'installprivlib'}\n";')
+INSTALLARCHLIB := $(TMPTOP)/$(shell \
+               $(PERL) -e 'use Config; print "$$Config{'installarchlib'}\n";')
+INSTALLVENDORLIB:=$(TMPTOP)/$(shell \
+               $(PERL) -e 'use Config; print "$$Config{'vendorlibexp'}\n";')
+
+FILES_TO_COMPRESS= $(DOCDIR)/README.* $(DOCDIR)/changelog.Debian
+CONFIG  := INSTALLDIRS=vendor 
+
+all build: configure stamp-build
+stamp-build:
+# Builds the binary package.
+	$(checkdir)
+	-test ! -f stamp-configure && $(MAKE) -f debian/rules configure
+	$(MAKE)
+	dpkg -l perl 'libc*' make dpkg-dev | \
+          awk '$$1 == "ii" { printf("%s-%s\n", $$2, $$3) }' > \
+           debian/buildinfo
+	touch stamp-build
+
+configure: stamp-configure Makefile
+stamp-configure Makefile:
+	$(checkdir)
+	-test ! -f stamp-configure && \
+	    $(PERL) Makefile.PL $(CONFIG) && touch stamp-configure
+
+clean:
+# Undoes the effect of `make -f debian/rules build'.
+	$(checkdir)
+	rm -f  $(FILES_TO_CLEAN) $(STAMPS_TO_CLEAN)
+	rm -rf $(DIRS_TO_CLEAN)
+	-test -f Makefile && $(MAKE) realclean
+	rm -f core `find . \( -name '*.orig' -o -name '*.rej' -o \
+          -name '*~' -o -name '*.bak' -o -name '#*#' -o \
+          -name '.*.orig' -o -name '.*.rej' -o -name '.SUMS' -o \
+          -size 0 \) -print` TAGS
+
+binary: binary-arch binary-indep
+binary-arch: build
+
+binary-indep: build stamp-binary
+stamp-binary:
+# Makes a binary package.
+	test 0 = $$(id | sed -e 's/(.*$$//' -e 's/^uid=//') || \
+		(echo need root priviledges; exit 1)
+	$(checkdir)
+	test -f stamp-build || $(deb_rule) build
+	rm -rf debian/tmp
+	$(make_directory) $(TMPTOP)
+	chmod g-s         $(TMPTOP)
+	$(make_directory) $(TMPTOP)/DEBIAN
+	$(make_directory) $(INSTALLPRIVLIB)
+	$(make_directory) $(INSTALLARCHLIB)
+	$(make_directory) $(MENUDIR)
+	$(make_directory)  $(DOCBASE)
+	$(make_directory) $(TMPTOP)/usr/share/man/man3
+	$(make_directory) $(DOCDIR)
+#	$(make_directory)    $(LINTIANDIR)
+#	echo                 'cnccalc: postinst-does-not-set-usr-doc-link'\
+#                             >> $(LINTIANDIR)/cnccalc
+	$(install_file)   debian/changelog $(DOCDIR)/changelog.Debian
+	$(install_file)   README           $(DOCDIR)/README
+	$(install_file)   debian/README    $(DOCDIR)/README.Debian
+	$(install_file)   debian/buildinfo $(DOCDIR)/buildinfo.Debian
+# Make sure the copyright file is not compressed
+	$(install_file)   debian/copyright $(DOCDIR)/copyright
+	$(MAKE)           PREFIX=$(TMPTOP)/usr install
+# Get rid of the old Carp.pm
+	-gzip -9qfr        $(MAN1DIR) $(MAN3DIR)
+	-rm -rf            $(INSTALLPRIVLIB)/
+	-rm -rf            $(INSTALLARCHLIB)/
+	find $(TMPTOP)/usr/lib/ -type f -name .packlist -exec rm {} \;
+	dpkg-gencontrol -isp
+	chmod -R          u+w $(TMPTOP)/usr/
+	chown -R          root.root $(TMPTOP)/
+	dpkg-deb          --build $(TMPTOP) ..
+	touch             stamp-binary
+
+define checkdir
+	test -f  CnCCalc/Server/Status.pm  -a -f debian/rules
+endef
+
+source diff:
+	@echo >&2 'source and diff are obsolete - use dpkg-source -b'; false
+
+
+.PHONY: binary binary-arch binary-indep clean

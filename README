@@ -1,0 +1,68 @@
+
+ Logging
+
+
+ a) Log all tasks
+ 
+
+ b) Select relevant tasks.
+
+   Since the final set of supply and transport tasks are not
+   deterministic, we needed to select the top level set of tasks
+   (which are supposed to be deterministic). 
+
+    Our observations indicate that all withdraw (and project withdraw)
+    tasks have supply (or project supply) tasks as parents, and
+    Maintain Inventory tasks as ultimate ancestors.  (Transport tasks,
+    correspondingly, are derived from DetermineRequirements). This is
+    an indirect method of ascertaining which tasks are the
+    deterministic top level 
+
+    Relevant tasks are tasks of type Supply, ProjectSupply, and
+    Transport whose Parent tasks are not themselves Supply,
+    ProjectSupply, or Transport.
+
+
+ c) Use the relevant tasks from the first base run to derive the RDD
+
+ d) Create a base line set. 
+
+    The base line set contains the minimum and maximum values for
+    start dates, end dates, and quantities for a task in the base line
+    runs. 
+
+    There are some issues about correlating the same tasks from
+    different runs. The transport tasks seem to be fairly
+    consistent, but supply tasks seem to vary from run to run.
+
+    We select a number of properties to allow us to identify the same
+    task in different runs -- we match on agent id, verb, NSNnumber,
+    preferred end date, preferred star date, preferred quantity,
+    origination location, and destination. 
+
+    We also compute the score for theminimum and maximum values for
+    the start dates, end dates, and quantities, and store the maximum
+    score for each of the tasks in the baseline for each of these 3
+    characteristics.
+
+ e) Then, for the stressed runs, we also calculate the score for start
+    dates, end dates, and quantities. If the task did not produce a
+    plan element, a NULL is entered as the score to keep track of
+    tasks that failed to complete. 
+
+ f) The completion table is created by correlating the tasks from the
+    base line tables and the stressed run, and noting the cases where
+    the stressed case score was higher than the maximum baseline score
+    for the same quantity. In cases where the score for the stressed
+    case is higher, the plan is deemed to be incorrect.
+ 
+ g) Finally, we calculate the total number of relevant tasks, the
+    total number of relevant supply tasks, and the total number of
+    relevant transport tasks. We calculate the percentage of tasks
+    that complete (and thus have non null scores), separately for
+    supply, transport, and total tasks.
+
+ h) Then, for all tasks that complete, we calculate the percentage
+    that completed correctly, separately for supply and transport
+    tasks, and also for the total tasks. 
+

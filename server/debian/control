@@ -1,0 +1,14 @@
+Source: cnccalc
+Section: perl
+Priority: optional
+Maintainer: Manoj Srivastava <manoj.srivastava@stdc.com>
+Standards-Version: 3.5.10.0
+Build-Depends-Indep: perl-modules 
+
+Package: cnccalc
+Architecture: all
+Depends: libwww-perl, libparse-recdescent-perl, libdbi-perl 
+Description: Completeness and Correctness Calculator for UltraLog
+ This package provides a HTTP based control panel for the calculation
+ of the completeness and correctness values for UltraLog experiment
+ runs.

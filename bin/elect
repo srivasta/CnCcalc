@@ -1,0 +1,501 @@
+       To_Location, Preferred_Quantity, Preferred_End_Date,
+       Scoring_Fn_Quantity, Scoring_Fn_End_Date,
+       Pref_Score_Quantity, Pref_Score_End_Date, Phase_no,
+       Confidence, Success, quantity, end_date,
+       score_quantity, score_end_date, deviation_quantity,
+       deviation_end_date
+FROM  Temp_Baseline 
+WHERE Task_id in (SELECT t1.Task_id
+                  FROM  Temp_Baseline t1, Temp_Baseline t2
+                  WHERE NOT t1.Task_id   = t2.Task_id               AND
+                  t1.Run_Id              = t2.Run_Id                AND
+                  t1.Agent               = t2.Agent                 AND
+                  t1.Verb                = t2.Verb                  AND
+                  t1.NSN_Number          = t2.NSN_Number            AND
+                  t1.ClassName           = t2.ClassName             AND
+                  t1.Nomenclature        = t2.Nomenclature          AND
+                  t1.SupplyClass         = t2.SupplyClass           AND
+                  t1.SupplyType          = t2.SupplyType            AND
+                  t1.For_Organization    = t2.For_Organization      AND
+                  t1.To_Location         = t2.To_Location           AND
+                  t1.Preferred_Quantity  = t2.Preferred_Quantity    AND
+                  t1.Preferred_End_Date  = t2.Preferred_End_Date    AND
+                  t1.Scoring_Fn_Quantity = t2.Scoring_Fn_Quantity   AND
+                  t1.Scoring_Fn_End_Date = t2.Scoring_Fn_End_Date   AND
+                  t1.Pref_Score_Quantity = t2.Pref_Score_Quantity   AND
+                  t1.Pref_Score_End_Date = t2.Pref_Score_End_Date   AND
+                  t1.Phase_no            = t2.Phase_no              AND
+                  t1.Confidence          = t2.Confidence            AND
+                  t1.Success             = t2.Success               AND
+                  t1.Quantity            = t2.Quantity              AND
+                  t1.end_date            = t2.end_date              AND
+                  t1.score_quantity      = t2.score_quantity        AND
+                  t1.score_end_date      = t2.score_end_date        AND
+                  t1.deviation_quantity  = t2.deviation_quantity    AND
+                  t1.deviation_end_date  = t2.deviation_end_date    AND
+                  t1.Verb                = 'Supply'                 AND
+                  t1.Run_Id              = 9)
+ORDER BY Run_Id, Agent, Verb, NSN_Number, ClassName, Nomenclature,
+          SupplyClass, SupplyType, For_Organization,
+          To_Location, Preferred_Quantity, Preferred_End_Date,
+          Scoring_Fn_Quantity, Scoring_Fn_End_Date,
+          Pref_Score_Quantity, Pref_Score_End_Date, Phase_no,
+          Confidence, Success, quantity, end_date,
+          score_quantity, score_end_date, deviation_quantity,
+          deviation_end_date;
+select * from runs;
+SELECT distinct Task_id, Run_Id, Agent, 
+       Verb, NSN_Number, ClassName, Nomenclature,
+       SupplyClass, SupplyType, For_Organization,
+       To_Location, Preferred_Quantity, Preferred_End_Date,
+       Scoring_Fn_Quantity, Scoring_Fn_End_Date,
+       Pref_Score_Quantity, Pref_Score_End_Date, Phase_no,
+       Confidence, Success, quantity, end_date,
+       score_quantity, score_end_date, deviation_quantity,
+       deviation_end_date
+FROM  Temp_Baseline 
+WHERE Task_id in (SELECT t1.Task_id
+                  FROM  Temp_Baseline t1, Temp_Baseline t2
+                  WHERE NOT t1.Task_id   = t2.Task_id               AND
+                  t1.Run_Id              = t2.Run_Id                AND
+                  t1.Agent               = t2.Agent                 AND
+                  t1.Verb                = t2.Verb                  AND
+                  t1.NSN_Number          = t2.NSN_Number            AND
+                  t1.ClassName           = t2.ClassName             AND
+                  t1.Nomenclature        = t2.Nomenclature          AND
+                  t1.SupplyClass         = t2.SupplyClass           AND
+                  t1.SupplyType          = t2.SupplyType            AND
+                  t1.For_Organization    = t2.For_Organization      AND
+                  t1.To_Location         = t2.To_Location           AND
+                  t1.Preferred_Quantity  = t2.Preferred_Quantity    AND
+                  t1.Preferred_End_Date  = t2.Preferred_End_Date    AND
+                  t1.Scoring_Fn_Quantity = t2.Scoring_Fn_Quantity   AND
+                  t1.Scoring_Fn_End_Date = t2.Scoring_Fn_End_Date   AND
+                  t1.Pref_Score_Quantity = t2.Pref_Score_Quantity   AND
+                  t1.Pref_Score_End_Date = t2.Pref_Score_End_Date   AND
+                  t1.Phase_no            = t2.Phase_no              AND
+                  t1.Confidence          = t2.Confidence            AND
+                  t1.Success             = t2.Success               AND
+                  t1.Quantity            = t2.Quantity              AND
+                  t1.end_date            = t2.end_date              AND
+                  t1.score_quantity      = t2.score_quantity        AND
+                  t1.score_end_date      = t2.score_end_date        AND
+                  t1.deviation_quantity  = t2.deviation_quantity    AND
+                  t1.deviation_end_date  = t2.deviation_end_date    AND
+                  t1.Verb                = 'Supply'                 AND
+                  t1.Run_Id              = 9)
+ORDER BY Run_Id, Agent, Verb, NSN_Number, ClassName, Nomenclature,
+          SupplyClass, SupplyType, For_Organization,
+          To_Location, Preferred_Quantity, Preferred_End_Date,
+          Scoring_Fn_Quantity, Scoring_Fn_End_Date,
+          Pref_Score_Quantity, Pref_Score_End_Date, Phase_no,
+          Confidence, Success, quantity, end_date,
+          score_quantity, score_end_date, deviation_quantity,
+          deviation_end_date;
+selct * from temp_baseline;
+select * from temp_baseline;
+select * from runs;
+update runs set type = 'Test' where id < 8;
+select * from runs;
+drop database amit1113;
+select * from stressed where verb = 'Supply';
+\x
+select * from stressed where verb = 'Supply';
+SELECT DISTINCT
+       tasks.run_id, tasks.id, tasks.agent, tasks.Verb, 
+       assets.typepg_id as NSN_Number, assets.classname,
+       typepg.Nomenclature, assets.SupplyClass, assets.SupplyType,
+       prep2.val as For_Organization, prep1.val as To_Location,
+       pref2.bestvalue as Preferred_Quantity, pref1.bestvalue as
+       Preferred_End_Date, pref2.scoringfunction as
+       Scoring_Fn_Quantity, pref1.scoringfunction as
+       Scoring_Fn_End_Date, pref2.score as Pref_Score_Quantity,
+       pref1.score as Pref_Score_End_Date,
+       prep3.val as Maintaining,
+FROM tasks, preferences pref1, preferences pref2, prepositions prep1,
+     prepositions prep2, prepositions prep3, assets, typepg
+WHERE tasks.run_id in (SELECT min(ID) FROM runs 
+                       WHERE runs.type = 'stress' 
+                         AND runs.ExperimentID = 'Robustness_1')
+  AND tasks.verb       = 'Supply'
+  AND typepg.typeid            = assets.typepg_id
+  AND prep1.prep       = 'To'
+  AND prep1.task_id    = tasks.id
+  AND prep2.prep       = 'For'
+  AND prep2.task_id    = tasks.id
+  AND prep3.prep       = 'Maintaining'
+  AND prep3.task_id    = tasks.id
+  AND pref1.aspecttype = 'END_TIME'
+  AND pref1.task_id    = tasks.id
+  AND pref2.aspecttype = 'QUANTITY'
+  AND pref2.task_id    = tasks.id
+  AND assets.task_id       = tasks.id;
+\w
+\p
+SELECT DISTINCT
+       tasks.run_id, tasks.id, tasks.agent, tasks.Verb, 
+       assets.typepg_id as NSN_Number, assets.classname,
+       typepg.Nomenclature, assets.SupplyClass, assets.SupplyType,
+       prep2.val as For_Organization,  prep3.val as Maintaining,
+prep1.val as To_Location,
+       pref2.bestvalue as Preferred_Quantity, pref1.bestvalue as
+       Preferred_End_Date, pref2.scoringfunction as
+       Scoring_Fn_Quantity, pref1.scoringfunction as
+       Scoring_Fn_End_Date, pref2.score as Pref_Score_Quantity,
+       pref1.score as Pref_Score_End_Date
+FROM tasks, preferences pref1, preferences pref2, prepositions prep1,
+     prepositions prep2, prepositions prep3, assets, typepg
+WHERE tasks.run_id in (SELECT min(ID) FROM runs 
+                       WHERE runs.type = 'stress' 
+                         AND runs.ExperimentID = 'Robustness_1')
+  AND tasks.verb       = 'Supply'
+  AND typepg.typeid            = assets.typepg_id
+  AND prep1.prep       = 'To'
+  AND prep1.task_id    = tasks.id
+  AND prep2.prep       = 'For'
+  AND prep2.task_id    = tasks.id
+  AND prep3.prep       = 'Maintaining'
+  AND prep3.task_id    = tasks.id
+  AND pref1.aspecttype = 'END_TIME'
+  AND pref1.task_id    = tasks.id
+  AND pref2.aspecttype = 'QUANTITY'
+  AND pref2.task_id    = tasks.id
+  AND assets.task_id       = tasks.id;
+select * from results ;
+select * from results ;
+select distinct verb from Completion_L2;
+select * from results ;
+\dt
+drop database cnccalc;
+\dt
+drop database cnccalc ;
+drop database cnccalc ;
+\dt
+\d allocation_results 
+select * from runs;
+\x
+select * from runs;
+\h
+\h show
+show
+;
+\h execute
+\h
+\h listen
+listen table
+;
+listen baseline;
+\dt
+select * from pg_table;
+\? 
+\dT
+\z
+\dt
+\d
+\?
+\h
+\dt
+SET TIME ZONE 'UTC';
+SELECT id, experimentid, description, type, status, gls, 
+                quiesced, logging, finished,  
+                datetime(int4(starttime/1000))  as "Log Started",
+                datetime(int4(endtime/1000))    as "Log Finished"
+        FROM runs ;
+\h datetime
+date
+;
+SELECT id, experimentid, description, type, status, gls, quiesced, logging, finished,  datetime(starttime) from runs;
+ select timestamp 'epoch' + interval '934624800 seconds';
+ select timestamp 'epoch' + interval starttime 'seconds';
+ select timestamp 'epoch' + interval starttime 'seconds' from runs;
+ select timestamp 'epoch' + interval (starttime) from runs;
+\d runs
+ select timestamp ('epoch' + interval (starttime)) from runs;
+ select timestamp 'epoch' + interval (starttime) from runs;
+ select timestamp 'epoch' + interval '934624800 seconds';
+select startdate from runs;
+select starttime from runs;
+select starttime:timestamp from runs;
+select starttime::timestamp from runs;
+SET TIME ZONE 'UTC';
+select starttime::timestamp from runs;
+SET TIME ZONE 'UTC'; select starttime::timestamp from runs;
+select timestamp epoch + starttime from runs;
+select timestamp 'epoch; + starttime from runs;
+select timestamp 'epoch' + starttime from runs;
+'
+;
+select timestamp 'epoch' + starttime from runs;
+select timestamp 'epoch' + interval starttime from runs;
+select timestamp 'epoch' + int4(starttime) from runs;
+select timestamp 'epoch' + interval(starttime) from runs;
+select timestamp at time zone 'UTC' epoch;
+select timestamp at time zone 'UTC' 'epoch';
+select timestamp  'epoch';
+select timestamp  1209172;
+select abstime 1209172;
+select abstime(1209172);
+select to_timestamp(1209172);
+select interval(reltime (startime||'secs')) from runs;
+create table foo(sec int4);
+insert into foo values(54321);
+select interval(reltime (sec||'secs')) from foo;
+select interval(abstime (sec||'secs')) from foo;
+select abstime(sec) from foo;
+select interval(abstime (sec||'secs')) from foo;
+select interval (sec||'secs') from foo;
+select * from foo;
+select timestamp "1970-01-01 0:0:0" + interval (sec||'secs') from foo;
+select timestamp '1970-01-01 0:0:0' + interval (sec||'secs') from foo;
+select timestamp '1970-01-01 0:0:0' + interval sec||'secs' from foo;
+select timestamp '1970-01-01 0:0:0' + interval '5321 secs' from foo;
+select timestamp '1970-01-01 0:0:0' + interval sec||' secs' from foo;
+select timestamp '1970-01-01 0:0:0' + interval sec from foo;
+select timestamp '1970-01-01 0:0:0' +  sec from foo;
+select timestamp '1970-01-01 0:0:0' +  interval sec from foo;
+select timestamp '1970-01-01 0:0:0' +  (sec as interval) from foo;
+select timestamp '1970-01-01 0:0:0' +  cast(sec as interval) from foo;
+select timestamp '1970-01-01 0:0:0' +  cast(sec as text) from foo;
+select timestamp '1970-01-01 0:0:0' +  cast(sec as text) at time zone 'UTC' from foo;
+select timestamp '1970-01-01 0:0:0' +  cast(sec as int) at time zone 'UTC' from foo;
+select timestamp '1970-01-01 0:0:0' at time zone 'UTC' from foo;
+select timestamp '1970-01-01 0:0:0' + interval '12 ' || 'secs' at time zone 'UTC' from foo;
+select timestamp '1970-01-01 0:0:0' + interval '12 secs' at time zone 'UTC' from foo;
+select timestamp '1970-01-01 0:0:0' + '12 secs' at time zone 'UTC' from foo;
+select timestamp '1970-01-01 0:0:0' + '0:0:12' at time zone 'UTC' from foo;
+select timestamp '1970-01-01 0:0:0' + interval '0:0:12' at time zone 'UTC' from foo;
+select timestamp '1970-01-01 0:0:0' + interval '0:0:12' at time zone 'UTC' from foo;
+select timestamp '1970-01-01 0:0:0' +  cast(sec as text) at time zone 'UTC' from foo;
+select cast(sec as text) at time zone 'UTC' from foo;
+select cast(sec as text) from foo;
+select '0:0:' || cast(sec as text) from foo;
+select '1970-01-01 0:0:' || cast(sec as text) from foo;
+select timestamp '1970-01-01 0:0:' || cast(sec as text) from foo;
+select timestamp '1970-01-01 0:0:' || cast(sec as text) at time zone 'UTC' from foo;
+select timestamp '1970-01-01 0:0:' || cast(sec as text) from foo;
+select timestamp ('1970-01-01 0:0:' || cast(sec as text)) from foo;
+select timestamp '1970-01-01 0:0:' || cast(sec as text) from foo;
+select timestamp '1970-01-01 0:0:' || cast(sec as text) from foo;
+select timestamp '1970-01-01 0:0:' || cast(sec as text) + interval '0 secs' from foo;
+select timestamp interval '0 secs' + '1970-01-01 0:0:' || cast(sec as text) from foo;
+select timestamp '1970-01-01 0:0:' || cast(sec as text) + interval '0 secs' from foo;
+select timestamp interval '0 secs' + '1970-01-01 0:0:' || cast(sec as text) from foo;
+select timestamp interval '0 secs' + '1970-01-01 0:0:' || sec  from foo;
+select timestamp  '0 secs' + '1970-01-01 0:0:' || sec  from foo;
+select timestamp  '1970-01-01 0:0:' || sec  from foo;
+select timestamp  '1970-01-01 0:0:' || sec  + interval '0 secs' from foo;
+select (timestamp  '1970-01-01 0:0:' || sec ) + interval '0 secs' from foo;
+select ( '1970-01-01 0:0:' || sec ) from foo;
+select timestamp  ( '1970-01-01 0:0:' || sec ) from foo;
+select ( '1970-01-01 0:0:' || sec ) from foo;
+select cast( '1970-01-01 0:0:' || sec as timestamp) from foo;
+select cast(now as timestamp);
+select cast(now90 as timestamp);
+select cast(now() as timestamp);
+select to_timestamp( '1970-01-01 0:0:' || sec) from foo;
+select to_timestamp( '1970-01-01', '0:0:' || sec) from foo;
+select interval( sec || 'secs') from foo;
+select interval( '0:0:' || sec) from foo;
+select interval '0:0:' || sec from foo;
+select interval '1 sec' * sec from foo;
+select timestamp '1970-01-01 0:0:0' + interval '1 sec' * sec from foo;
+select timestamp '1970-01-01 0:0:0' + interval '1 sec' * (starttime/1000)  as "Log Started" from runs;
+drop database cnccalc ;
+drop database cnccalc ;
+\dt
+select max(id) + 1 from runs;
+select max(id) from runs;
+select max(id) from runs;
+select * from status ;
+drop database newdb;
+\dt
+select * from status;
+select * from status where run_id = '8';
+select * from status where run_id = '8';
+select * from status where run_id = '4';
+select * from runs;
+update runs set type = 'stress' where id = 4;
+select * from runs;
+select * from runs
+;
+help create
+l
+;
+? create
+;
+\?
+\h create
+\h create
+\h create
+CREATE USER srivasta CREATEDB;
+\u cncperf
+\?
+\c cncperf
+\?
+\dp
+drop database cncperf
+;
+drop database cncperf;
+drop database cncperf;
+drop database cncperf;
+\dt
+\dt+
+drop table tasks;
+drop table tasks;
+drop database cncperf;
+\? load
+\i '/hoe/srivasta/cncperf.sql';
+\i '/hoe/srivasta/cncperf.sql'
+\i '/home/srivasta/cncperf.sql'
+\dt
+\?
+\?
+\c cncperf srivasta
+\dt+
+drop database cncperf;
+\c cncperf srivasta
+\dt+
+create table test;
+\dt+
+\l
+\dt+
+\dt
+\dt phased_aspects;
+\?
+\du
+\d phased_aspects
+select * from phased_aspects limit 100;
+select * from tasks;
+select * from allocation_results ;
+select * from planelements ;
+select * from planelements ;
+select * from phased_aspects limit 100;
+select * from phased_aspects limit 100;
+select * from assets ;
+select * from preferences ;
+select * from prepositions ;
+DROP TABLE Temp_Baseline_Results;
+DROP TABLE Temp_Baseline_Results;
+DROP TABLE Temp_Baseline_Results;
+DROP TABLE Temp_Baseline_Results;
+select * from runs;
+update runs set type = 'stress' where id = 4;
+select * from runs;
+\dt
+\d consolidated_aspects
+select * from results;
+\dt
+select * from baseline;
+select * from planning_baseline;
+select * from Results_Planning_Baseline_4 ;
+select * from Results_Planning_Baseline_4 ;
+select * from Results ;
+select * from Results_Planning_Baseline_4 ;
+\dt
+\dt
+drop table artificial_lvl_2;
+drop table artificial_lvl_2_planning_baseline_4;
+drop table baseline;
+drop table stressed;
+drop table stressed_4_lvl_2;
+drop table stressed_lvl_2;
+drop table stressed_lvl_6;
+drop table temp_baseline;
+drop table temp_baseline_op;
+drop table temp_baseline_phased;
+drop table temp_stressed;
+\dt
+drop table baseline_matched;
+drop table compare_one;
+drop table compare_one_planning_baseline_4;
+drop table compare_two
+drop table compare_two_planning_baseline_4;
+drop table compare_two_planning_baseline_4;
+drop table completion;
+drop table completion_l2;
+drop table completion_planning_baseline_4;
+drop table completion_planning_baseline_4_l2;
+drop table completion_unmatched;
+drop table lvl_6_rolledup_4;
+drop table matched_with_sum;
+drop table planning_baseline;
+drop table planning_baseline_4_matched;
+drop table remaining_lvl_2;
+drop table results_planning_baseline_4;
+drop table stressed_4;
+drop table temp_baseline_results;
+drop table temp_planning_baseline_op;
+drop table unmatched;
+drop table unmatched_lvl_2;
+drop table unmatched_lvl_2_planning_baseline_4;
+drop table unmatched_planning_baseline_4;
+drop table unmatched_with_sum;
+\dt
+drop table compare_two;
+drop table completion_planning_baseline_4_unmatched;
+drop table lvl_6_rolledup;
+drop table matched_directly;
+drop table matched_directly_planning_baseline_4;
+drop table matched_with_sum_planning_baseline_4;
+drop table remaining_lvl_2_4;
+drop table stressed_4_lvl_6;
+drop table temp_planning_baseline;
+drop table temp_planning_baseline_phased;
+drop table temp_planning_baseline_results;
+drop table temp_stressed_4;
+drop table temp_stressed_phased;
+drop table temp_stressed_results;
+drop table temp_stressed_op;
+drop table temp_stressed_4_op;
+\dt
+drop table unmatched_with_sum_planning_baseline_4;
+drop table temp_stressed_4_phased;
+drop table temp_stressed_4_results;
+select * from results;
+select * from results_planning_baseline_4 ;
+select * from results;
+select * from results_planning_baseline_4 ;
+drop database cnccalc;
+drop database cnccalc;
+\dt
+select * from runs;
+select * from runs;
+\dt runs
+\d runs
+drop database cnccalc;
+drop database cnccalc;
+drop database cnccalc;
+select * from runs;
+INSERT INTO runs (id, status, type, experimentid, description) VALUES ('1', 0, 'base', 'Dummy-Experiment-1-of-1','Dummy Experiment');
+select * from runs;
+drop database cnccalc;
+drop database cnccalc;
+selest * from status;
+select * from status;
+select * from status where run_id = 2;
+select * from status where run_id = 2;
+CREATE TABLE Baseline_sets
+        Name varchar(63) NOT NULL,
+        Components varchar(127) NOT NULL,
+        Description varchar(1024),
+        Status varchar(31) NOT NULL,
+        CONSTRAINT base_set_pkey PRIMARY KEY ( Name )
+        ;
+CREATE TABLE Baseline_sets  (
+        Name varchar(63) NOT NULL,
+        Components varchar(127) NOT NULL,
+        Description varchar(1024),
+        Status varchar(31) NOT NULL,
+        CONSTRAINT base_set_pkey PRIMARY KEY ( Name )
+        );
+SELECT id, experimentid, description, type, status 
+                     FROM runs
+                     WHERE type = 'base' order by id;
+select count(id) from runs where id > 5;
+select * from baseline_sets ;
+delete from baseline_sets ;
+select * from baseline_sets ;
+\dt
+\dt
+select * from baseline_sets;
+\select * from runs;

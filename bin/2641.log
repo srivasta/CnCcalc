@@ -1,0 +1,271 @@
+update runs set experimentid = 'Robustness_1' where id in (1, 2, 3);
+UPDATE 3
+\!date
+Mon Aug 18 23:21:23 CDT 2003
+-- 00 (drop_Scoring_Constants) 
+ DROP TABLE  Scoring_Constants; 
+DROP TABLE
+-- 01 (Scoring_Constants) 
+ CREATE TABLE Scoring_Constants (
+ID          varchar(31) PRIMARY KEY  default '',
+A           double precision          default '0',
+B           double precision          default '10',
+C           double precision          default 0,
+D           double precision          default 0,
+E           double precision          default 0,
+F           double precision          default 0,
+G           double precision          default 0,
+H           double precision          default 0,
+I           double precision          default '2.5'
+); 
+CREATE TABLE
+-- 02 (Insert_Scoring_Constant) 
+ INSERT INTO Scoring_Constants
+VALUES ('Default', '0', '10', '0', '0', '0', '0', '0', '0', '2.5'); 
+INSERT 170116441 1
+-- 03 (drop_Temp_Seventh_day) 
+ DROP TABLE Temp_Seventh_day; 
+DROP TABLE
+-- 04 (Temp_Seventh_day) 
+ CREATE TABLE Temp_Seventh_day (
+   Boundary        double  precision     default '1124323200000.0'
+); 
+CREATE TABLE
+-- 05 (Insert_Temp_Seventh_day) 
+ INSERT INTO Temp_Seventh_day VALUES ('1124323200000.0'); 
+INSERT 170116445 1
+-- 06 (drop_Temp_XXbaseXX_Results) 
+ DROP TABLE Temp_Baseline_Results; 
+DROP TABLE
+-- 07 (Temp_XXbaseXX_Results) 
+ CREATE  TABLE Temp_Baseline_Results (
+  run_id                integer  NOT NULL,
+  task_id               varchar(63) NOT NULL,
+  Agent                 varchar(63) NOT NULL default '',
+  Verb                  varchar(31) NOT NULL default '',
+  Phase_no              integer                       default NULL,
+  Confidence            double precision              default NULL,
+  Success               char(1)                       default NULL,
+  Quantity              double precision              default NULL,
+  Start_Date            double precision              default NULL,
+  End_Date              double precision              default NULL,
+  Rate                  double precision              default NULL,
+  Score_Quantity   double precision               default NULL,
+  Score_Start_Date double precision               default NULL,
+  Score_End_Date   double precision               default NULL,
+  Score_Rate       double precision               default NULL
+); 
+CREATE TABLE
+-- 08 (drop_Temp_XXbaseXX_OP) 
+ DROP TABLE Temp_Baseline_OP; 
+DROP TABLE
+-- 09 (Temp_XXbaseXX_OP) 
+ CREATE   TABLE Temp_Baseline_OP (
+  run_id                integer  NOT NULL,
+  task_id               varchar(63) NOT NULL,
+  Agent                 varchar(63) NOT NULL default '',
+  Verb                  varchar(31) NOT NULL default '',
+  NSN_Number            varchar(63)          default NULL,
+  ClassName             varchar(255)         default NULL,
+  SupplyClass           varchar(63)          default NULL,
+  SupplyType            varchar(63)          default NULL,
+  From_Location         varchar(63)          default NULL,
+  For_Organization      varchar(63)          default NULL,
+  To_Location           varchar(63)          default NULL,
+  Maintaining           varchar(63)          default NULL,
+  Preferred_Quantity    double precision                default NULL,
+  Preferred_Start_Date  double precision              default NULL,
+  Preferred_End_Date    double precision              default NULL,
+  Preferred_Rate        double precision              default NULL,
+  Scoring_Fn_Quantity   varchar(255)         default NULL,
+  Scoring_Fn_Start_Date varchar(255)         default NULL,
+  Scoring_Fn_End_Date   varchar(255)         default NULL,
+  Scoring_Fn_Rate       varchar(255)         default NULL,
+  Pref_Score_Quantity   double precision                default NULL,
+  Pref_Score_Start_Date double precision              default NULL,
+  Pref_Score_End_Date   double precision                default NULL,
+  Pref_Score_Rate       double precision                default NULL
+); 
+CREATE TABLE
+-- 10 (drop_Temp_XXbaseXX) 
+ DROP TABLE Temp_Baseline; 
+DROP TABLE
+-- 11 (Temp_XXbaseXX) 
+ CREATE  TABLE Temp_Baseline (
+  run_id                integer  NOT NULL,
+  task_id               varchar(63) NOT NULL,
+  Agent                 varchar(63) NOT NULL default '',
+  Verb                  varchar(31) NOT NULL default '',
+  NSN_Number            varchar(63)          default NULL,
+  ClassName             varchar(255)         default NULL,
+  SupplyClass           varchar(63)          default NULL,
+  SupplyType            varchar(63)          default NULL,
+  From_Location         varchar(63)          default NULL,
+  For_Organization      varchar(63)          default NULL,
+  To_Location           varchar(63)          default NULL,
+  Maintaining           varchar(63)          default NULL,
+  Preferred_Quantity    double precision                default NULL,
+  Preferred_Start_Date  double precision              default NULL,
+  Preferred_End_Date    double precision              default NULL,
+  Preferred_Rate        double precision              default NULL,
+  Phase_no              integer                       default NULL,
+  Confidence            double precision              default NULL,
+  Success               char(1)                       default NULL,
+  Quantity              double precision                default NULL,
+  Start_Date            double precision              default NULL,
+  End_Date              double precision              default NULL,
+  Rate                  double precision                default NULL,
+  Score_Quantity   double precision               default NULL,
+  Score_Start_Date double precision               default NULL,
+  Score_End_Date   double precision               default NULL,
+  Score_Rate       double precision               default NULL,
+  Deviation_Quantity        double precision                default NULL,
+  Deviation_Start_Date      double precision                default NULL,
+  Deviation_End_Date        double precision                default NULL,
+  Deviation_Rate            double precision                default NULL,
+  Scoring_Fn_Quantity   varchar(255)         default NULL,
+  Scoring_Fn_Start_Date varchar(255)         default NULL,
+  Scoring_Fn_End_Date   varchar(255)         default NULL,
+  Scoring_Fn_Rate       varchar(255)         default NULL,
+  Pref_Score_Quantity   double precision                default NULL,
+  Pref_Score_Start_Date double precision              default NULL,
+  Pref_Score_End_Date   double precision                default NULL,
+  Pref_Score_Rate       double precision                default NULL
+); 
+CREATE TABLE
+-- 12 (drop_Temp_XXbaseXX_Phased) 
+ DROP TABLE Temp_Baseline_Phased; 
+DROP TABLE
+-- 13 (Temp_XXbaseXX_Phased) 
+ CREATE  TABLE Temp_Baseline_Phased (
+  run_id                integer  NOT NULL,
+  task_id               varchar(63) NOT NULL,
+  Agent                 varchar(63) NOT NULL default '',
+  Verb                  varchar(31) NOT NULL default '',
+  NSN_Number            varchar(63)          default NULL,
+  ClassName             varchar(255)         default NULL,
+  SupplyClass           varchar(63)          default NULL,
+  SupplyType            varchar(63)          default NULL,
+  From_Location         varchar(63)          default NULL,
+  For_Organization      varchar(63)          default NULL,
+  To_Location           varchar(63)          default NULL,
+  Maintaining           varchar(63)          default NULL,
+  Preferred_Quantity    double precision                default NULL,
+  Preferred_Start_Date  double precision              default NULL,
+  Preferred_End_Date    double precision              default NULL,
+  Preferred_Rate        double precision              default NULL,
+  Phase_no              integer                       default NULL,
+  Confidence            double precision              default NULL,
+  Success               char(1)                       default NULL,
+  Quantity              double precision                default NULL,
+  Start_Date            double precision              default NULL,
+  End_Date              double precision              default NULL,
+  Rate                  double precision                default NULL,
+  Score_Quantity   double precision               default NULL,
+  Score_Start_Date double precision               default NULL,
+  Score_End_Date   double precision               default NULL,
+  Score_Rate       double precision               default NULL,
+  Deviation_Quantity        double precision                default NULL,
+  Deviation_Start_Date      double precision                default NULL,
+  Deviation_End_Date        double precision                default NULL,
+  Deviation_Rate            double precision                default NULL,
+  Scoring_Fn_Quantity   varchar(255)         default NULL,
+  Scoring_Fn_Start_Date varchar(255)         default NULL,
+  Scoring_Fn_End_Date   varchar(255)         default NULL,
+  Scoring_Fn_Rate       varchar(255)         default NULL,
+  Pref_Score_Quantity   double precision                default NULL,
+  Pref_Score_Start_Date double precision              default NULL,
+  Pref_Score_End_Date   double precision                default NULL,
+  Pref_Score_Rate       double precision                default NULL
+); 
+CREATE TABLE
+-- 14 (XXbaseXX) 
+ DROP TABLE  Baseline; 
+DROP TABLE
+-- 15 (XXbaseXX) 
+ CREATE TABLE Baseline (
+  Agent                 varchar(63) NOT NULL default '',
+  Verb                  varchar(31) NOT NULL default '',
+  NSN_Number            varchar(63)          default NULL,
+  ClassName             varchar(255)         default NULL,
+  SupplyClass           varchar(63)          default NULL,
+  SupplyType            varchar(63)          default NULL,
+  From_Location         varchar(63)          default NULL,
+  For_Organization      varchar(63)          default NULL,
+  To_Location           varchar(63)          default NULL,
+  Maintaining           varchar(63)          default NULL,
+  Preferred_Quantity    double precision                default NULL,
+  Preferred_Start_Date  double precision              default NULL,
+  Preferred_End_Date    double precision              default NULL,
+  Preferred_Rate        double precision              default NULL,
+  Phase_no              integer                       default NULL,
+  Confidence            double precision              default NULL,
+  Success               char(1)                       default NULL,
+  MIN_Quantity              double precision                default NULL,
+  MIN_Start_Date            double precision              default NULL,
+  MIN_End_Date              double precision              default NULL,
+  MIN_Rate                  double precision                default NULL,
+  MAX_Quantity              double precision                default NULL,
+  MAX_Start_Date            double precision              default NULL,
+  MAX_End_Date              double precision              default NULL,
+  MAX_Rate                  double precision                default NULL,
+  Score_Quantity   double precision               default NULL,
+  Score_Start_Date double precision               default NULL,
+  Score_End_Date   double precision               default NULL,
+  Score_Rate       double precision               default NULL,
+  Deviation_Quantity        double precision                default NULL,
+  Deviation_Start_Date      double precision                default NULL,
+  Deviation_End_Date        double precision                default NULL,
+  Deviation_Rate            double precision                default NULL,
+  Scoring_Fn_Quantity   varchar(255)         default NULL,
+  Scoring_Fn_Start_Date varchar(255)         default NULL,
+  Scoring_Fn_End_Date   varchar(255)         default NULL,
+  Scoring_Fn_Rate       varchar(255)         default NULL,
+  Pref_Score_Quantity   double precision                default NULL,
+  Pref_Score_Start_Date double precision              default NULL,
+  Pref_Score_End_Date   double precision                default NULL,
+  Pref_Score_Rate       double precision                default NULL
+); 
+CREATE TABLE
+\!date
+Mon Aug 18 23:21:24 CDT 2003
+-- 16 (Insert_Temp_OP) 
+ INSERT INTO Temp_Baseline_OP (run_id, task_id, 
+                              Agent, Verb, NSN_Number,
+                              ClassName, SupplyClass,
+                              SupplyType, From_Location, To_Location,
+                              Preferred_Start_Date,
+                              Preferred_End_Date,
+                              Scoring_Fn_Start_Date,
+                              Scoring_Fn_End_Date,
+                              Pref_Score_Start_Date,
+                              Pref_Score_End_Date)
+SELECT tasks.run_id, tasks.id, tasks.agent, tasks.Verb, 
+       assets.typepg_id as NSN_Number, assets.classname,
+       assets.SupplyClass, assets.SupplyType,
+       prep2.val as From_Location, prep1.val as To_Location,
+       pref2.bestvalue as Preferred_Start_Date, pref1.bestvalue as
+       Preferred_End_Date, pref2.scoringfunction as
+       Scoring_Fn_Start_Date, pref1.scoringfunction as
+       Scoring_Fn_End_Date, pref2.score as Pref_Score_Start_Date,
+       pref1.score as Pref_Score_End_Date
+FROM tasks, preferences pref1, preferences pref2, prepositions prep1,
+     prepositions prep2, assets
+WHERE tasks.run_id in (SELECT ID FROM runs 
+                       WHERE runs.type = 'base' 
+                         AND runs.ExperimentID = 'Robustness_1')
+  AND tasks.verb               = 'Transport'
+  AND prep1.prep               = 'To'
+  AND prep1.task_id            = tasks.id
+  AND prep1.run_id             = tasks.run_id
+  AND prep2.prep               = 'From'
+  AND prep2.task_id            = tasks.id
+  AND prep2.run_id             = tasks.run_id
+  AND pref1.aspecttype         = 'END_TIME'
+  AND pref1.task_id            = tasks.id
+  AND pref1.run_id             = tasks.run_id
+  AND pref2.aspecttype         = 'START_TIME' 
+  AND pref2.task_id            = tasks.id
+  AND pref2.run_id             = tasks.run_id
+  AND assets.run_id            = tasks.run_id
+  AND assets.task_id           = tasks.id; 

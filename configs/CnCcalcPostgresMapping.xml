@@ -1,0 +1,340 @@
+<!DOCTYPE databases PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+                           "http://castor.exolab.org/mapping.dtd">
+<mapping>
+
+  <key-generator name="SEQUENCE">
+    <param name="sequence" value="{0}_{1}_seq"/>
+  </key-generator>
+
+  <!--  Mapping for CnCcalc Run   -->
+  <class name="com.stdc.CnCcalc.data.Run" identity="id">
+    <description>Runs for CnCcalc</description>
+    <map-to table="runs" />
+    <cache-type type="none"/>
+    <field name="id" type="long" >
+      <sql name="id" type="bigint"/>
+    </field>
+    <field name="status" type="integer" >
+      <sql name="status" type="integer"/>
+    </field>
+    <field name="gls" type="integer" >
+      <sql name="gls" type="integer"/>
+    </field>
+    <field name="type" type="string">
+      <sql name="type" type="varchar" />
+    </field>
+    <field name="experimentid" type="string">
+      <sql name="experimentid" type="varchar" />
+    </field>
+    <field name="description" type="string">
+      <sql name="description" type="varchar" />
+    </field>
+    <field name="startDate" type="long" >
+      <sql name="startdate" type="bigint"/>
+    </field>
+    <field name="today" type="long" >
+      <sql name="today" type="bigint"/>
+    </field>
+  </class>
+
+  <!--  Mapping for CnCcalc agent Status   -->
+  <class name="com.stdc.CnCcalc.data.Status" identity="runId agent">
+    <description>Status for CnCcalc</description>
+    <map-to table="status" />
+    <cache-type type="none"/>
+    <field name="runId" type="long" >
+      <sql name="run_id" type="bigint"/>
+    </field>
+    <field name="agent" type="string">
+      <sql name="agent" type="varchar"/>
+    </field>
+    <field name="hostname" type="string">
+      <sql name="hostname" type="varchar"/>
+    </field>
+    <field name="state" type="string">
+      <sql name="state" type="varchar"/>
+    </field>
+    <field name="rehydrated" type="integer" >
+      <sql name="rehydrated" type="integer"/>
+    </field>
+    <field name="today" type="long" >
+      <sql name="today" type="bigint"/>
+    </field>
+    <field name="totalTasks" type="integer" >
+      <sql name="total_tasks" type="integer"/>
+    </field>
+    <field name="loggedTasks" type="integer" >
+      <sql name="logged_tasks" type="integer"/>
+    </field>
+    <field name="logStart" type="long" >
+      <sql name="log_start" type="bigint"/>
+    </field>
+    <field name="logEnd" type="long" >
+      <sql name="log_end" type="bigint"/>
+    </field>
+  </class>
+
+  <!-- Mapping for Tasks -->
+  <class name="com.stdc.CnCcalc.data.Task" identity="runId id" access="shared">
+    <description>
+        Our implementation of Task.
+    </description>
+    <map-to table="tasks" />
+    <!--  Task has a reference to Run -->
+    <field name="runId" type="long" >
+      <sql name="run_id" type="bigint"/>
+    </field>
+    <field name="id" type="string">
+      <sql name="id" type="varchar"/>
+    </field>
+    <field name="agent" type="string">
+      <sql name="agent" type="varchar"/>
+    </field>
+    <field name="parentid" type="string">
+      <sql name="parent_id" type="varchar"/>
+    </field>
+    <field name="verb" type="string">
+      <sql name="verb" type="varchar"/>
+    </field>
+  </class>
+
+  <class name="com.stdc.CnCcalc.data.MPTask" extends="com.stdc.CnCcalc.data.Task" access="shared">
+    <description>
+        MPTasks are tasks with multiple parents
+    </description>
+    <map-to table="mp_tasks" />
+<!--
+    <field name="parenttasks" type="com.stdc.CnCcalc.data.Task" required="true"
+           collection="arraylist">
+      <sql name="parent_id"
+           many-table="task_parent" many-key="task_id" />
+    </field>
+-->
+  </class>
+
+  <!--  Mapping for Direct Object Asset -->
+  <class name="com.stdc.CnCcalc.data.Asset" identity="runId taskId id" access="shared">
+    <description>Direct Object Asset</description>
+    <map-to table="assets" />
+    <!--  Asset has a reference to Run -->
+    <field name="runId" type="long" >
+      <sql name="run_id" type="bigint"/>
+    </field>
+    <field name="taskId" type="string">
+      <sql name="task_id" type="varchar"/>
+    </field>
+    <field name="id" type="string">
+      <sql name="id" type="varchar"/>
+    </field>
+    <field name="classname" type="string">
+      <sql name="classname" type="varchar"/>
+    </field>
+    <field name="typePgId" type="string">
+      <sql name="typepg_id" type="varchar"/>
+    </field>
+    <field name="itemPgId" type="string">
+      <sql name="itempg_id" type="varchar"/>
+    </field>
+    <field name="supplyClass" type="string">
+      <sql name="supplyclass" type="varchar"/>
+    </field>
+    <field name="supplyType" type="string">
+      <sql name="supplytype" type="varchar"/>
+    </field>
+<!--
+    <field name="prototype" type="com.stdc.CnCcalc.data.Asset">
+      <sql name="prototype_id" />
+    </field>
+-->
+    <field name="isAggregate" type="boolean">
+      <sql name="isaggregate" type="char[01]"/>
+    </field>
+    <field name="quantity" type="integer" >
+      <sql name="quantity" type="integer"/>
+    </field>
+  </class>
+
+  <!--  Mapping for Preference -->
+  <class name="com.stdc.CnCcalc.data.Preference" identity="runId taskId" access="shared">
+    <map-to table="preferences" />
+    <field name="runId" type="long" >
+      <sql name="run_id" type="bigint"/>
+    </field>
+    <field name="taskId" type="string">
+      <sql name="task_id" type="varchar"/>
+    </field>
+    <field name="preferredQuantity" type="double">
+      <sql name="preferred_quantity" type="double"/>
+    </field>
+    <field name="preferredStartDate" type="double">
+      <sql name="preferred_start_date" type="double"/>
+    </field>
+    <field name="preferredEndDate" type="double">
+      <sql name="preferred_end_date" type="double"/>
+    </field>
+    <field name="preferredRate" type="double">
+      <sql name="preferred_rate" type="double"/>
+    </field>
+    <field name="scoringFnQuantity" type="string">
+      <sql name="scoring_fn_quantity" type="varchar"/>
+    </field>
+    <field name="scoringFnStartDate" type="string">
+      <sql name="scoring_fn_start_date" type="varchar"/>
+    </field>
+    <field name="scoringFnEndDate" type="string">
+      <sql name="scoring_fn_end_date" type="varchar"/>
+    </field>
+    <field name="scoringFnRate" type="string">
+      <sql name="scoring_fn_rate" type="varchar"/>
+    </field>
+    <field name="prefScoreQuantity" type="double">
+      <sql name="pref_score_quantity" type="double"/>
+    </field>
+    <field name="prefScoreStartDate" type="double">
+      <sql name="pref_score_start_date" type="double"/>
+    </field>
+    <field name="prefScoreEndDate" type="double">
+      <sql name="pref_score_end_date" type="double"/>
+    </field>
+    <field name="prefScoreRate" type="double">
+      <sql name="pref_score_rate" type="double"/>
+    </field>
+  </class>
+
+  <!--  Mapping for Preposition -->
+  <class name="com.stdc.CnCcalc.data.Preposition" identity="runId taskId" access="shared">
+    <map-to table="prepositions" />
+    <field name="runId" type="long" >
+      <sql name="run_id" type="bigint"/>
+    </field>
+    <field name="taskId" type="string">
+      <sql name="task_id" type="varchar"/>
+    </field>
+    <field name="FromLocation" type="string">
+      <sql name="from_location" type="varchar"/>
+    </field>
+    <field name="ForOrganization" type="string">
+      <sql name="for_organization" type="varchar"/>
+    </field>
+    <field name="ToLocation" type="string">
+      <sql name="to_location" type="varchar"/>
+    </field>
+    <field name="MaintainType" type="string">
+      <sql name="maintain_type" type="varchar"/>
+    </field>
+    <field name="MaintainTypeid" type="string">
+      <sql name="maintain_typeid" type="varchar"/>
+    </field>
+    <field name="MaintainItemid" type="string">
+      <sql name="maintain_itemid" type="varchar"/>
+    </field>
+    <field name="MaintainNomenclature" type="string">
+      <sql name="maintain_nomenclature" type="varchar"/>
+    </field>
+    <field name="OfType" type="string">
+      <sql name="of_type" type="varchar"/>
+    </field>
+  </class>
+
+  <!--  Mapping for PlanElement -->
+  <class name="com.stdc.CnCcalc.data.PlanElement" identity="runId taskId id" >
+    <description>PlanElement</description>
+    <map-to table="planelements" />
+    <!--  PlanElement has a reference to Run -->
+    <field name="runId" type="long" >
+      <sql name="run_id" type="bigint"/>
+    </field>
+    <field name="taskId" type="string">
+      <sql name="task_id" type="varchar"/>
+    </field>
+    <field name="id" type="string">
+      <sql name="id" type="varchar"/>
+    </field>
+    <field name="type" type="string">
+      <sql name="type" type="varchar"/>
+    </field>
+  </class>
+
+  <!--  Mapping for Allocation Result -->
+  <class name="com.stdc.CnCcalc.data.AllocationResult" identity="runId taskId planId type">
+    <description>Allocation Result</description>
+    <map-to table="allocation_results" />
+    <field name="runId" type="long" >
+      <sql name="run_id" type="bigint"/>
+    </field>
+    <field name="taskId" type="string">
+      <sql name="task_id" type="varchar"/>
+    </field>
+    <field name="planId" type="string">
+      <sql name="pe_id" type="varchar"/>
+    </field>
+    <field name="type" type="string">
+      <sql name="type" type="varchar"/>
+    </field>
+    <field name="phased" type="boolean">
+      <sql name="phased" type="char[01]"/>
+    </field>
+    <field name="success" type="boolean">
+      <sql name="success" type="char[01]"/>
+    </field>
+    <field name="confidence" type="float">
+      <sql name="confidence" type="float"/>
+    </field>
+  </class>
+
+  <class name="com.stdc.CnCcalc.data.AspectValue" identity="runId taskId planId arType aspecttype" access="shared">
+    <map-to table="consolidated_aspects" />
+    <!--  Aspectvalues has a reference to Run -->
+    <field name="runId" type="long" >
+      <sql name="run_id" type="bigint"/>
+    </field>
+    <field name="taskId" type="string">
+      <sql name="task_id" type="varchar"/>
+    </field>
+    <field name="planId" type="string">
+      <sql name="pe_id" type="varchar"/>
+    </field>
+    <field name="arType" type="string">
+      <sql name="ar_type" type="varchar"/>
+    </field>
+    <field name="aspecttype" type="string">
+      <sql name="aspecttype" type="varchar"/>
+    </field>
+    <field name="value" type="double">
+      <sql name="value" type="double"/>
+    </field>
+    <field name="score" type="double">
+      <sql name="score" type="double"/>
+    </field>
+  </class>
+
+  <class name="com.stdc.CnCcalc.data.ARPhase" identity="runId taskId planId arType phaseNo aspecttype" access="shared">
+    <map-to table="phased_aspects" />
+    <!--  ARPhase has a reference to Run -->
+    <field name="runId" type="long" >
+      <sql name="run_id" type="bigint"/>
+    </field>
+    <field name="taskId" type="string">
+      <sql name="task_id" type="varchar"/>
+    </field>
+    <field name="planId" type="string">
+      <sql name="pe_id" type="varchar"/>
+    </field>
+    <field name="arType" type="string">
+      <sql name="ar_type" type="varchar"/>
+    </field>
+    <field name="phaseNo" type="integer">
+      <sql name="phase_no" type="integer"/>
+    </field>
+    <field name="aspecttype" type="string">
+      <sql name="aspecttype" type="varchar"/>
+    </field>
+    <field name="value" type="double">
+      <sql name="value" type="double"/>
+    </field>
+    <field name="score" type="double">
+      <sql name="score" type="double"/>
+    </field>
+  </class>
+
+</mapping>

@@ -1,0 +1,1071 @@
+/*
+ * Changing the defaults  
+ */
+
+
+address                  {
+  color: gray; 
+  margin-left: -2em;
+  text-align: right;
+}     
+
+
+body                     {
+  color: black;
+  background-color: #EEEEE9;
+  font-family: Helvetica, Times New Roman, Georgia, Minion Web, Book Antiqua, Utopia, serif;
+}
+
+small                    { font-size:      .92em;  }       
+big                      { font-size:      1.17em; }       
+
+/* 
+ * Link types
+ */
+
+
+a {
+	text-decoration:	none;
+	/* color:		#436976; */
+	color:			#03a906;
+	background-color:	transparent;
+}
+
+/*
+A:link                   { color:  #18605a; }       
+A:visited                { color:  #996666; }       
+A:active                 { color:  #663300; }       
+A:hover                  { color:  #FC0;    }       
+*/
+
+a.normref                { color : red;     }       
+a.informref              { color : green;   }       
+A.offsite                { color:  #F60;    }       
+
+
+
+img {
+	border:			none;
+	vertical-align:		middle;
+}
+
+p {
+	margin:			0.5em 0em 1em 0em;
+	text-align:		justify;
+}
+
+p a {
+	text-decoration:	underline;
+}
+
+p a:visited {
+	color:			Purple;	/* #996666; */
+	background-color:	transparent;
+}
+
+p a:active {
+	color:			Red;
+	background-color:	transparent;
+}
+
+p img {
+	border:			0;
+	margin:			0;
+}
+
+hr {
+	clear:			both;
+	height:			1px;
+	color:			#8CACBB;
+	background-color:	transparent;
+}
+
+
+
+pre                      {
+    color: maroon;
+    margin-left: 1em;
+    font-family: monospace;
+    font-variant:   small-caps; 
+    font-weight: bold 
+}
+
+tt, code, kbd, samp      { font-family: monospace }
+
+.Failed { color: rgb(119, 136, 153); background-color: Beige; text-align: center; }
+.Successful { color: rgb(0,100,0); background-color: PaleGreen; text-align: center; }
+.Baseline { color:  rgb(0,0,205);  background-color: Cyan; text-align: center; } 
+.Folder { font-size : smaller; font-style: italic; }
+.Ignored { color: rgb(136, 125, 107); background-color: Bisque; text-align: center; }
+
+div.menu {
+	background:		transparent;
+	border-collapse:	collapse;
+	border-bottom-color:	#8cabb;
+	border-bottom-style:	solid;
+	border-bottom-width:	1px;
+	padding:		0.5em 0em 0em 2em;
+	white-space:		nowrap;
+}
+
+
+div.menu a {
+	background:		transparent;
+	border-color:		#8cabb;
+	border-width:		1px;
+	border-style:		solid solid none solid;
+	color:			#436976
+	height:			1.2em;
+	margin-right:		0.2em;
+	padding:		0em 2em;
+}
+
+div.menu a.selected {
+	background:		#DEE7EC;
+	border:			1px solid #8CACBB;
+	border-bottom:		#DEE7EC 1px solid;
+	color:			#436976;
+	font-weight:		normal;
+}
+
+div.menu a:hover {
+	/* background:		#dee7ec; */
+	background:		#e7deec;
+	border-color:		#8cacbb;
+	border-bottom-color:	#dee7ec;
+	color:			#896396;
+}
+
+div#content { 
+ background-color: #defaff;
+ /*
+ background-position: 0 0;
+ background-repeat: no-repeat;
+ background-attachment: fixed;
+ */
+}
+div#content {
+  /* position: absolute; 
+     top: 26px; 
+     left: 161px; 
+     right: 25px;
+  */
+  margin: 1em 2em 1em 2em;;
+  font: Verdana, sans-serif; 
+  padding: 10px; 
+  border: solid #FFCC99;
+ }
+div#content h3 {margin-bottom: 0.25em;}
+
+div#bln { 
+        padding: 0.5em; 
+        background-color: #ceeaef;
+ }
+
+p#bln   { 
+       text-align: center;
+       font-weight: bold;
+       font-style: italic;
+ }
+
+
+del                       {       
+        text-decoration:        line-through;
+        background:     #900;
+}       
+
+ins     {       
+        text-decoration:        none;
+        background:     #060;
+}       
+
+acronym {       
+        font-variant:   small-caps;
+        letter-spacing: 0.1em;
+}       
+
+ 
+/*
+ *   Effects
+ */
+
+.underline                { text-decoration:underline;    }
+.overline                 { text-decoration:overline;     }
+.obeylines-h,.obeylines-v { white-space: nowrap;          }
+.try                      { border:solid 4px;             }
+.name                     { font-size: 4em; text-align: center }
+.oops                     { font-family: Jester, "Comic Sans MS" }
+.colophon                 { display:        none;        }       
+.hide                     {
+  display: none;
+  color: white;
+}
+
+/* letter and word spacing */
+.letterspaced    {letter-spacing: 10pt;}
+.wordspaced      {word-spacing: 20px;}
+/* vertical alignment examples */
+.sub             {vertical-align: sub;}
+.super           {vertical-align: super;}
+/* text alignment properties */ .right {text-align: right;}
+.left            {text-align: left;}
+.justify         {text-align: justify;}
+.center          {text-align: center;}
+/* indentation and line-height examples */
+p.indent         {text-indent: 20px;
+                   line-height: 200%;}
+p.negindent      {text-indent: -10px;
+                   background-color: yellow;}
+p.noindent               { text-indent: 0em     }
+p.indent                 { text-indent: 1.5em   }
+#bigchar         {background-color: red;
+                   color: white;
+                   font-size: 28pt;
+                   font-family: Impact;}
+p.carson         {font-size: 12pt;
+                   font-family: Courier;
+                   letter-spacing: 4pt;
+                   line-height: 5pt;}
+/* text transformation properties */
+.uppercase       {text-transform: uppercase;}
+.lowercase       {text-transform: lowercase;}
+.capitalize      {text-transform: capitalize;}
+/* text-decoration properties */
+.underline       {text-decoration: underline;}
+.blink           {text-decoration: blink;}
+.line-through    {text-decoration: line-through;}
+.overline        {text-decoration: overline;}
+/* white space control */
+.normal          {white-space: normal;}
+.pre             {white-space: pre;}
+.nowrap          {white-space: nowrap;}
+.obeylines-h,.obeylines-v { white-space: nowrap;          }
+ 
+
+
+span.skip                 { display: none }
+div.skip                  { display: none }
+
+/*
+ * Create a Box around the matter
+ */
+
+div.box                  {
+  border: solid; 
+  border-width: 0.1em; 
+  padding: 0.5em;
+}
+
+/*
+ * Ordered Lists
+ */
+
+ol.withroman             { list-style-type: lower-roman }
+ol.upperroman            { list-style-type: upper-roman }
+ol.upperalpha            { list-style-type: upper-alpha }
+ol.withalpha             { list-style-type: lower-alpha }
+
+li.serif      		 { font-family: Georgia, serif, Helvetica }
+li.sans-serif 		 { font-family: Times New Roman, Helvetica, sans-serif 	}
+li.fantasy    		 { font-family: fantasy    	}
+li.monospace  		 { font-family: monospace  	}
+li.cursive    		 { font-family: cursive    	}    
+
+ul.padded                { line-height: 120%                  }
+li.overskrift            { margin-top: 2ex; font-weight: bold }
+
+/*
+ *   Alignment
+ */
+
+div.justify              { text-align: justify; }
+h1.center                { text-align: center;  }
+p.noindent               { text-indent: 0em     }
+p.indent                 { text-indent: 1.5em   }
+
+/*
+ *   DocBook: Title
+ */
+
+div.titlepage            {
+     margin: 1em 0;
+     padding: 1em;
+     border:   solid thin;
+     border-color:   blue;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color:			Black;
+	clear:			left;
+	font:			100% helvetica, Verdana, Myriad Web, sans-serif;
+	margin:			0;
+	padding-top:		0.5em;
+	border-bottom:		1px solid #8CACBB;
+}
+
+h1 {
+	font-size:		210%;
+}
+
+h2 {
+	font-size:		160%;
+}
+
+h3 {
+	font-size:		150%;
+}
+
+h4 {
+	font-size:		130%;
+}
+
+h5 {
+	font-size:		115%;
+}
+
+h6 {
+	font-size:		100%;
+}
+
+h1.title                 {
+         text-align: center; 
+         font-variant: small-caps;
+   	font-family: helvetica, Verdana, Myriad Web, Syntax, sans-serif; 
+         font-weight: bold; 
+         text-transform: capitalize
+	margin:			0;
+	padding-top:		0.5em;
+	border-bottom:		1px solid #8CACBB;
+}
+
+form {
+	border:			none;
+	margin-top: 5ex;
+	margin-bottom: none;
+	margin-left:			2%;
+	margin-right:			2%;
+	padding:    1em;
+}
+
+form table {
+        margin: none;
+}
+
+textarea {
+	border:			1px solid #8cacbb;
+	color:			black;
+	background-color:	white;
+	width:			88%;
+	padding:		0.5em;
+}
+
+input {
+	font:			100% Verdana, Helvetica, Arial, sans-serif;
+	border:			1px solid #8cacbb;  
+	color:			Black;
+	background-color:	white;
+	vertical-align:		middle;
+	margin-bottom:		1px; /* IE bug fix */
+	padding:		0.1em;
+}
+
+select {
+	font:			100% Verdana, Helvetica, Arial, sans-serif;
+	border:			1px solid #8cacbb;  
+	vertical-align:		top;
+}
+
+
+
+.titletext               {
+  color: black;
+  font-size: 18pt;
+  font-weight: bold;
+  margin-bottom: -10px;
+}
+
+
+SPAN.date { font-size: 0.8em; color: #999 }
+SPAN.date:after { content: "\A0\A0" }
+
+SPAN.attribution {  font-weight: bold; }
+
+.motto, .motto A {font: italic 120%/1.3 Georgia, serif; color: #990}
+P.map-also { font-style: italic; margin-left: 15%; text-align: right }
+
+/*
+ *   Logical divisions
+ */
+
+/*
+ *   DocBook: Article
+ */
+
+/* div.article {  } */
+
+/*
+ *   DocBook: Appendix
+ */
+
+/* div.appendix {} */
+/* h1.appendix {} */
+
+/* div.article {  } */
+
+/*
+ *   DocBook: Authors
+ */
+
+/* div.authorgroup {} */
+h3.author                {
+	font-weight: bold;
+    	margin: 2%;  	
+	text-align: center; 
+	font-style: italic;
+}
+
+/*
+ *   Abstracts
+ */
+
+div.abstract             { font-style: italic;  }
+
+
+
+/*
+ *   DocBook: Book
+ */
+
+/* body.book {  } */
+/* div.book {  } */
+
+
+/*
+ *   Copyright
+ */
+
+div.copyright, p.copyright {
+    font-weight: bold;
+    margin: 5%;  
+}
+
+
+
+span.holder              {
+    font-family:            Times New Roman, Helvetica, Verdana, Myriad Web, Syntax, sans-serif;
+    font-size-adjust:       .53;
+}
+
+
+
+.colophon                { display:        none; }  
+
+/*
+ *   Introduction
+ */
+
+div.intro                {
+    font-style: italic;
+    margin-left: 2em;
+    margin-right: 2em
+}
+
+div.intro EM             {
+    font-style: normal
+}
+
+div.intro H2             {
+    background: #fbfbff;
+    color: black;
+    border: none;
+}
+
+
+table {
+	border-collapse:	collapse;
+	border:		outset 1pt #8cacbb;/*	1px solid #8cacbb;*/
+	/*margin:			1.5em 0em 1.5em 0em; */
+         margin-left: auto;
+         margin-right: auto;
+         margin-top: 1.5em;
+         margin-bottom: 1.0em;
+	clear:			both;
+}
+
+table th {
+	background:		#DEE7EC;
+	border-top:		1px solid #8CACBB;
+	border-bottom:		1px solid #8CACBB;
+	border-right:		1px solid #8CACBB;
+	color:			Black;
+	font-weight:		normal;
+	padding:		         0em 1em 0em 1em;
+	white-space:		nowrap;
+	text-align:		left;
+}
+
+table th.selected              { 
+	background: #E0E022; 
+	color: Blue 
+}
+
+
+
+table tr.odd {
+	background:		transparent;
+}
+
+
+table tr.even {
+	background:		#F7F9FA;
+}
+
+table td {
+	border-right:		1px solid #8CACBB;
+	padding:		0em 1em;
+	text-align:		left;
+}
+
+table a:hover {
+	text-decoration:	underline;
+}
+
+table img {
+	vertical-align:		middle;
+}
+
+
+
+/*
+ *   Navigation
+ */
+
+div.navigation           {
+    font-size: smaller;
+    background: #E0E0E0 
+}
+
+p.navigation             {
+    font-family: Times New Roman, helvetica, Verdana, Myriad Web, Syntax, sans-serif; 
+    font-size: 80%; 
+    background: #e0e0e0;
+    margin-left: -3em;
+    padding: 0.3em 0.3em 0.3em 3em
+}
+
+/*
+ *   Table of Contents
+ */
+
+ul.toc                   { list-style-type: none; }
+div.toc,div.subtoc               {
+     padding: 1em;
+     border: solid thin;
+     margin: 1em 0;
+     background: #ddd
+}
+
+/*
+ *   Captions
+ */
+
+p.caption                { font-weight: bold;     }
+
+/*
+ *   To Be Decided
+ */
+
+p.tbd, div.tbd {
+    font-style: italic;
+    color: #800000;
+    font-size: smaller
+}
+div.tbd                  { margin: 1em            }
+
+/*
+ *   DocBook: Section
+ */
+
+/* div.section {} */
+h1.section               {
+     font-family: sans-serif, helvetica, Times New Roman, Verdana, Myriad Web, Syntax, sans-serif; 
+     font-variant: small-caps;
+}
+
+/*
+ *   Selections
+ */
+
+
+
+
+/*
+ *   Notes
+ */
+
+
+div.note                 {
+    color: green;
+    margin-left: 1em;
+}
+
+p.note                   {
+    color: green;
+    margin-left: 1em;
+}
+
+P.pnote                  {
+  border-top: red thin solid;
+  border-bottom: red thin solid;
+  padding: 10px;
+}
+
+div.infobar {
+	background:		#DEE7EC;
+	border-bottom-color:	#8CACBB;
+	border-bottom-style:	solid;
+	border-bottom-width:	1px;
+	color:			Black;
+	padding-right:		3em;
+	text-align:		right;
+}
+
+div.contextbar {
+	border-bottom-color:	#8CACBB;
+	border-bottom-style:	solid;
+	border-bottom-width:	1px;
+	padding-left:		2em;
+	padding-right:		2em;
+}
+
+
+/*
+ *   Warnings
+ */
+div.warning               {
+   margin-right: 8%;
+   margin-left:8%;
+   text-align:justify; 
+   font-weight: bold; 
+   border: solid red
+}
+
+.warning                  {       
+        text-transform: none;
+        font-style:     normal;
+        font-weight:    bolder;
+        background:     yellow;
+        color:  black;
+} 
+
+.warning strong {
+  color: #FF4500;
+  background: #FFD700;
+  text-decoration: none
+}
+
+.warning a:link, .warning a:visited, .warning a:active {
+  color: #FF4500;
+  background: transparent;
+  text-decoration: underline
+}
+
+.warning strong a:link, .warning strong a:visited, .warning strong a:active {
+  color: #FF4500;
+  background: #FFD700
+}
+
+
+DIV.output                { margin-left:3%; }
+
+.default                  { text-decoration: underline; font-style: normal }
+.required                 { font-weight: bold }
+
+.footer {
+  margin-top: 2em;
+  padding-top: 1em;
+  border-top: solid thin black
+}
+   
+/*
+ *   Important things
+ */
+.important                 {       
+        text-transform: none;
+        font-style:     normal;
+        font-weight:    bolder;
+        background:     white;
+        color:          red;
+}       
+
+/*
+ * Error
+ */
+
+.error {
+  color: #DC143C;
+  background: transparent;
+  text-decoration: none
+}
+
+.error strong {
+  color: #DC143C;
+  background: #FFD700;
+  text-decoration: none
+}
+
+.error a:link, .error a:visited, .error a:active {
+  color: #DC143C;
+  background: transparent;
+  text-decoration: underline
+}
+
+.error strong a:link, .error strong a:visited, .error strong a:active {
+  color: #DC143C;
+  background: #FFD700
+}
+
+
+p.tinytext                 {
+  border-top: black thin solid;
+  border-bottom: black thin solid;
+  padding: 8px;
+  font-size: 8pt;
+}
+
+/*
+ *  Banners
+ */
+.banner                    {
+  top: 0px;
+  position: absolute;
+  padding-right: 10px;
+  float: right;
+  width: 100%;
+  height: 40px;
+  background-color: #EEEEEE;
+  text-align: right;
+}
+
+.banner img                { float: left; }
+
+/*
+ * Command bars
+ */
+.commandbar                {
+  position: absolute;
+  top: 40px;  
+  background-color: Navy;
+  height: 22px;
+  border: thin solid Black;  
+  width: 100%;  
+}
+
+.commandbar div             {
+  position: absolute;
+  color: white;
+
+}
+
+.commandbar div a           {
+  text-decoration: none;
+  font-size: 10pt;
+  color: White;
+  font-weight: bold;  
+}
+
+.commandbar div a:visited   {  color: white;  }
+.commandbar div a:hover     {  color: #3399FF }
+.cmdItem                    {  top: 1px;      }
+.cmdItem A                  {
+  border: thin solid White;  
+  top: -1px;
+  margin-top: -1px;
+  cursor: default;
+  font-size: 10pt;
+  color: White;
+  font-weight: bold;
+  height: 18px;
+}
+
+
+/*
+ *     Products
+ */
+span.productname         {
+        font-weight:    bold;
+}
+span.productnumber       {
+         font-style:     italic;
+}      
+
+/*
+ *     Outlines
+ */
+
+.outlineunder            {
+  position: absolute;
+  left: 0px;
+  background-color: #EEEEEE;
+  width: 150px;
+  border-right:black thin solid;
+  height: 100%;
+  top: 62px;
+
+}
+
+.outline                 {
+  position: absolute;  
+  top: 62px;
+  width: 150px;
+  padding-left: 15px;  
+  font-weight: bold;
+  font-family: Tahoma;
+  font-size: 11pt;
+  color: #003399;
+  height: 100%;
+  padding-top: 10px;
+
+}
+
+.outline div             {
+  padding-top: 5px;
+  padding-bottom: 3px;
+  padding-right: 6px;
+}
+
+.outline div a           {
+  text-decoration: none;  /*kill underlining of all menu links regardless of tie
+r*/
+  color: #003399;
+
+}
+
+.outline div A:visited   {  color: #003399; }
+.outline div a:hover     {  color: #3399FF; }
+
+/*
+ *   Examples
+ */
+
+div.example              {
+    width: 100%;
+    color: black;
+}
+
+tt.example               {
+    color: maroon;
+    margin-left: 1em;
+}
+
+div.dtd-example {
+    width: 100%;
+    color: black;
+}
+
+div.illegal-example      {
+    width: 100%;
+    color: red;
+    border: solid red;
+}
+
+div.illegal-example p    { color: black; }
+
+div.deprecated-example   {
+    width: 100%;
+    color: red;
+    border: solid rgb(255,165,0); /* orange */
+}
+
+div.deprecated-example p { color: black; }
+
+
+
+/*
+ *   DTD's
+ */
+
+pre.dtd-fragment         { margin-left: 0;        }
+
+pre.dtd                  {
+    color: black;
+    margin-left: 0;
+}
+
+div.dtd-example          {
+    width: 100%;
+    color: black;
+}
+
+div.dtd-fragment         {
+    width: 100%;
+    border: none;
+    background-color: #eee;
+}
+
+
+/*
+ *    TeX based stuff
+ */ 
+
+.cmr-7                   {font-size:70%;                   	}
+.cmmi-10                 {font-style: italic;              	}
+.cmmi-7                  {font-size:70%;font-style: italic;	}
+.cmbx-10                 {font-weight: bold;               	}
+.cmtt-10                 {font-family: monospace;          	}
+.cmti-10                 {font-style: italic;              	}
+.small-caps              {font-variant: small-caps;        	}
+.hline hr, .cline hr     { height : 1px;                   	}
+.Canvas                  { position:relative;              	}    
+img.mathdisplay          { margin-top: 1em; margin-bottom: 1em; }
+
+.bugfixes                {
+   background: yellow;
+   padding:0.5em;
+   margin-left:70%;
+   text-align:center;
+   font-style: italic;
+   font-weight: bold; 
+}
+
+span.tex                  {letter-spacing: -0.125em; }
+span.tex span.e           { position:relative;top:0.5ex;left:-0.0417em;}
+a span.tex span.e         {text-decoration: none; }
+
+/* Century Schoolbook font is very similar to Computer Modern Math: cmmi */
+.math                     { font-family: "Century Schoolbook", serif; }
+.math i                   {
+    font-family: "Century Schoolbook", serif;
+    font-style: italic 
+}
+.boldmath                 {
+    font-family: "Century Schoolbook", serif;
+    font-weight: bold 
+}
+
+.headline
+{
+	text-align: center;
+	width: 14.6em;
+	padding: .5em 0;
+	margin: 1em auto;
+	border-bottom: 5px dotted #000; 
+	border-top: 1.5em solid #000;  
+	font-family: Georgia, Times, 'Times New Roman', serif;
+	font-size: 1.2em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+
+/* implement both fixed-size and relative sizes */
+small.xtiny             { font-size : xx-small }
+small.tiny              { font-size : x-small  }
+small.scriptsize        { font-size : smaller  }
+small.footnotesize      { font-size : small    }
+small.small             {  }
+big.large               {  }
+big.xlarge              { font-size : large    }
+big.xxlarge             { font-size : x-large  }
+big.huge                { font-size : larger   }
+big.xhuge               { font-size : xx-large }
+
+.subhead        {       
+        margin-top:     .75em;
+        margin-bottom:  .75em;
+        padding-top:    0;
+        padding-bottom: 0;
+        border-top:     0;
+        border-bottom:  0;
+}       
+                
+.stb    {       
+        margin-top:     2.17em;
+        margin-bottom:  .75em;
+        padding-top:    2.17em;
+        padding-bottom: 0;
+        border-top:     0;
+        border-bottom:  0;
+        border-style:   solid
+}       
+
+P.stb { text-indent: 0; margin-top: 0.6em } /* Small thematic break */
+                
+.mtb    {       
+        margin-top:     3.08em;
+        margin-bottom:  .75em;
+        padding-top:    3.08em;
+        padding-bottom: 0;
+        border-top:     .1em;
+        border-bottom:  0;
+        border-style:   solid
+}       
+                
+.ltb    {       
+        margin-top:     4.34em;
+        margin-bottom:  .75em;
+        padding-top:    4.34em;
+        padding-bottom: 0;
+        border-top:     .25em;
+        border-bottom:  0;
+        border-style:   solid
+}       
+        
+/* hint and alt-hint are for paragraphs that are like "sticky notes" */
+
+.hint, .alt-hint {
+  width: 14em;
+  padding: 1em;
+  color: #000;
+  background: #CFC;
+  border-right: solid thick #CCC;
+  border-bottom: solid thick #CCC;
+  font-style: italic;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+.hint {
+  float: right;
+  text-align: right;
+  margin-left: 1em;
+  margin-right: 0;
+}
+.alt-hint {
+  float: left;
+  /* margin-left: -6%; This doesn't work in IE 5 :-( */
+  text-align: left;
+  margin-left: 0;
+  margin-right: 1em;
+}
+.hint ul, .hint ol {
+  /*text-align: left;*/
+  margin-left: 0;
+  padding-left: 0;
+  list-style-position: inside;
+}
+.hint li {
+  margin-left: 0;
+}
+.hint em, .alt-hint em {
+  font-style: normal;
+}
+.hint em em, .alt-hint em em {
+  font-style: italic;
+}
+
+/* Use nohint for what should be displayed if the UA doesn't support hints */
+.nohint {
+  display: none;
+}
+
+.logo {  float: left; }
+
+DIV.endmatter { margin-right: -6em; border-top: thin solid }
+DIV.endmatter HR { display: none }
+
+
+P.hint + P, P.alt-hint + P { text-indent: 0; margin-top: 1em }
+
+P.remark {font-size: smaller}
+
+

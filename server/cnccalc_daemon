@@ -1,0 +1,39 @@
+#!/bin/bash
+#                               -*- Mode: Sh -*- 
+# cnccalc_daemon --- 
+# Author           : Manoj Srivastava ( srivasta@calidity.green-gryphon.com ) 
+# Created On       : Mon Dec 15 13:10:27 2003
+# Created On Node  : calidity.green-gryphon.com
+# Last Modified By : Manoj Srivastava
+# Last Modified On : Mon Dec 15 14:32:35 2003
+# Last Machine Used: calidity.green-gryphon.com
+# Update Count     : 10
+# Status           : Unknown, Use with caution!
+# HISTORY          : 
+# Description      : 
+# 
+# 
+OPTION="--http_port=33723 "
+case "$1" in
+    start)
+	./cnccalc $OPTION > cnc_server.log 2>&1 &
+	echo $$ > cnc.pid
+	;;
+    stop)
+	if [ -e cnc.pid ]; then
+	    pid=$(cat cnc.pid)
+	    if [ -n "$pid" ]; then
+		kill -s INT ${pid}		
+	    fi
+	    killall -s INT -w cnccalc
+	    killall -9 cnccalc
+	    rm -f cnc.pid
+	fi
+	;;
+    restart)
+	sh $0 stop
+	sh $0 start
+	;;
+    *)
+	
+esac

@@ -1,0 +1,47 @@
+####################################################
+# Rule to insert the CnC Calc Plugin
+# Add to :
+# All Logistics Agents except those listed in the exclude_array, below.
+# plugin = com.stdc.CnCcalc.plugin.CnCcalcPlugin
+require "socket"
+
+cnc_classname='com.stdc.CnCcalc.plugin.CnCcalcPlugin'
+freeze_servlet = "org.cougaar.core.plugin.freeze.FreezeServlet"
+exclude_array = %w{ TRANSCOM GlobalAir PlanePacker GlobalSea ShipPacker TheaterGround CONUSGround }
+db_name = Socket.gethostname
+
+nodes = {}
+society.each_agent do |agent|
+  if (agent.get_facet(:superior_org_id) || agent.name == 'NCA')
+    if ( exclude_array.include?(agent.name) )
+      next
+    end
+    unless agent.has_component? { |c| c.classname == cnc_classname }
+      if !nodes.has_key?(agent.node.name)
+        nodes[agent.node.name] = agent.node
+      end
+      agent.add_component do |c|
+        c.classname = cnc_classname
+        if agent.get_facet(:is_ua)
+          c.add_argument("UA_Agent")
+        end
+      end # add_component
+    end # unless
+  end # if
+  agent.each_component do |comp|
+    if (comp.classname == freeze_servlet)
+      unless comp.has_argument? (cnc_classname)
+        comp.add_argument(cnc_classname)
+      end
+      break
+    end
+  end
+end # each_agent
+
+nodes.each_value do |node|
+  node.append_value_on_parameter("-Dorg.cougaar.config.path", "$COUGAAR_INSTALL_PATH/configs/CnCcalc")
+  node.override_parameter("-Dorg.cougaar.core.logging.log4j.appender.CNCCALC.File", "$COUGAAR_INSTALL_PATH/workspace/log4jlogs/#{node.name}.cnclog")
+  node.override_parameter("-Dcom.stdc.CnCcalc.database.url", "jdbc:postgresql://cnccalc-db/#{db_name}")
+  node.override_parameter("-Dcom.stdc.CnCcalc.database.mapping", "CnCcalcPostgresMapping.xml")
+end
+

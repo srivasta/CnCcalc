@@ -1,0 +1,7 @@
+2003-05-09  Manoj Srivastava  <manoj.srivastava@stdc.com>
+
+	* CnCCalc.pm: Added version
+
+	* CnCCalc/Baseline.pm, CnCCalc/Completion.pm, CnCCalc/Init.pm, CnCCalc/Results.pm, CnCCalc/Server.pm, CnCCalc/Server/Admin.pm, CnCCalc/Server/Analysis.pm, CnCCalc/Server/Analyze.pm, CnCCalc/Server/Create.pm, CnCCalc/Server/Create_Baseline.pm, CnCCalc/Server/Create_Results.pm, CnCCalc/Server/Create_Stressed.pm, CnCCalc/Server/Detailed_Status.pm, CnCCalc/Server/New_Baseline.pm, CnCCalc/Server/New_DataBase.pm, CnCCalc/Server/New_Runs.pm, CnCCalc/Server/New_Stress.pm, CnCCalc/Server/Results.pm, CnCCalc/Server/Show_Results.pm, CnCCalc/Server/Status.pm, CnCCalc/Server/Welcome.pm, CnCCalc/Stressed.pm, cnccalc, cnccalc.css, test_db.pl, CnCCalc.pm:
+	First fully tested version
+

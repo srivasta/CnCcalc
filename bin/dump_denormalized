@@ -1,0 +1,95 @@
+#!/usr/bin/perl -w
+#                              -*- Mode: Perl -*- 
+# dump_denormalized.pl --- 
+# Author           : Manoj Srivastava ( srivasta@ember.green-gryphon.com ) 
+# Created On       : Tue Dec  3 10:36:44 2002
+# Created On Node  : ember.green-gryphon.com
+# Last Modified By : Manoj Srivastava
+# Last Modified On : Tue Dec 10 14:03:35 2002
+# Last Machine Used: ember.green-gryphon.com
+# Update Count     : 48
+# Status           : Unknown, Use with caution!
+# HISTORY          : 
+# Description      : 
+# 
+# 
+
+use strict;
+require 5.002;
+
+#($main::MYNAME     = $main::0) =~ s|.*/||;
+#$main::Author      = "Manoj Srivastava";
+#$main::AuthorMail  = "manoj.srivastava\@stdc.com";
+#$main::Version     = '$Revision: 1.3 $ ';
+
+use Carp;
+use Getopt::Long;
+use Pod::Usage;
+
+use DBI;
+
+
+my @tables_to_dump =  ( 'baseline', 'stressed'  );
+
+sub main () {
+  my %Options = ('src'    => "dbi:Pg:dbname=cnccalc",
+                 's_user' => "postgres"
+                );
+  my $parser = new Getopt::Long::Parser;
+  $parser->configure ("bundling_override", "permute");
+  $parser->getoptions(\%Options, 'help|?',   'man',
+                      'src=s',   's_user=s', 's_pass=s')
+    or die "failed to parse options\n";
+  my $dbh_src = DBI->connect_cached($Options{'src'}, $Options{'s_user'},
+                                    $Options{'s_pass'},
+                                    { RaiseError => 1, AutoCommit => 0 })
+    or die $DBI::errstr;
+
+  foreach my $table (@ARGV) {
+    my $output =  "SELECT * FROM $table;";
+    my %row;
+    my @titles;
+    eval {
+      my $sth = $dbh_src->prepare($output);
+      $sth->execute;
+      $sth->bind_columns( \ ( @row{ @{$sth->{NAME_lc} } } ));
+      @titles = @{$sth->{NAME_lc} };
+      print STDERR " TABLE $table\n";
+      for my $key (@titles) {
+	print " $key";
+	if ($key =~ m/_date$/ && $key !~ m/scor/ && $key !~ m/deviation/) {
+	  print "**  |";
+	}
+	else {
+	  print "  |";
+	}
+      }
+      print "\n";
+      while ($sth->fetch) {
+	my $lineout;
+	for my $key (@titles) {
+	  my $value;
+	  $value = "$row{$key}" if defined $row{$key};
+	  $value = "NULL"   unless defined $row{$key};
+	  if (defined $row{$key}       && $value =~ m/^\d+$/
+	      && (($key =~ m/_date$/     && $key !~ m/scor/  
+		   && $key !~ m/deviation/) ||
+		  ($key =~ m/^starttime$/ || $key =~ m/^endtime$/))) {
+	    $value = gmtime($value / 1000.0);
+	    #$value .= " [$row{$key}]";
+	  }
+	  $lineout .= " $value |";
+	}
+	chop $lineout;
+	print "$lineout\n";
+      }
+      $sth->finish;
+    };
+    if ($@) {
+      die "Aborted because of $@";
+    }
+    print "-" x 72, "\n";
+  }
+}
+
+&main;

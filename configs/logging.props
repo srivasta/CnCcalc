@@ -1,0 +1,28 @@
+log4j.rootLogger=WARN,COMMON
+
+log4j.appender.COMMON=org.apache.log4j.FileAppender
+log4j.appender.COMMON.layout=org.apache.log4j.PatternLayout
+log4j.appender.COMMON.layout.ConversionPattern=%d{ABSOLUTE} %-5p - %c{1} - %m%n
+
+log4j.logger.EVENT=INFO,EVENTSOCKET,EVENTLOG
+log4j.additivity.EVENT=false
+log4j.appender.EVENTSOCKET=org.cougaar.tools.jabberlogger.SocketAppender
+log4j.appender.EVENTLOG=org.apache.log4j.FileAppender
+log4j.appender.EVENTLOG.layout=org.apache.log4j.PatternLayout
+log4j.appender.EVENTLOG.layout.ConversionPattern=%d{ABSOLUTE} %-5p - %c{1} - %m%n
+
+# Log to a file
+#log4j.category.org.cougaar.core.security=DEBUG,SECURITY
+#log4j.additivity.org.cougaar.core.security=false
+#log4j.appender.SECURITY=org.apache.log4j.FileAppender
+#log4j.appender.SECURITY.layout=org.apache.log4j.PatternLayout
+#log4j.appender.SECURITY.layout.ConversionPattern=%d{ABSOLUTE} %-5p - %c{1} - %m%n
+
+# Copy this paragraph below to your logging configuration file
+# In the TIC it is be configs/common/loggingConfig.conf
+log4j.logger.com.stdc.CnCcalc.plugin.CnCcalcPlugin=INFO,CNCCALC
+log4j.additivity.com.stdc.CnCcalc.plugin.CnCcalcPlugin=false
+log4j.appender.CNCCALC=org.apache.log4j.FileAppender
+log4j.appender.CNCCALC.layout=org.apache.log4j.PatternLayout
+log4j.appender.CNCCALC.layout.ConversionPattern=%d{ABSOLUTE} %-5p - %c{1} - %m%n
+#### log4j.appender.CNCCALC.File=/opt/share/cougaar/current/workspace/log4jlogs/$hostname.cnclog

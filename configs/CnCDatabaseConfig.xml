@@ -1,0 +1,25 @@
+<!DOCTYPE databases PUBLIC "-//EXOLAB/Castor JDO Configuration DTD Version 1.0//EN"
+                           "http://castor.exolab.org/jdo-conf.dtd">
+
+<database name="Assesment" engine="postgresql" >
+<!--
+  <data-source class-name="com.codestudio.sql.PoolManDataSource">
+    <params database-name="cncPool"/>
+  </data-source>
+-->
+<!--
+  <data-source class-name="org.postgresql.PostgresqlDataSource">
+    <params server-name="10.1.2.100" port-number="5432" database-name="cnccalc"
+            user="postgres" password="secret" />
+  </data-source>
+-->
+<!--
+ <driver class-name="com.codestudio.sql.PoolMan"
+         url="jdbc:poolman://cncPool"/>
+-->
+  <driver class-name="org.postgresql.Driver" url="jdbc:postgresql://10.1.2.100/cnccalc"> 
+    <param name="user" value="postgres"/>
+    <param name="password" value="secret" />
+  </driver>
+  <mapping href="CnCcalcPostgresMapping.xml" />
+</database>

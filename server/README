@@ -1,0 +1,29 @@
+CnCCalc version 0.01
+====================
+
+This directory contains the HTTP based CnCCalculator. 
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+  CGI.pm libwww-perl libparse-recdescent-perl libdbi-perl 
+  libdbd-pg-perl and a database specific driver.
+
+	On RedHat 8.0, the specific packages to install are:
+ perl-libwww-perl-5.65-2.noarch.rpm       perl-DBD-Pg-1.13-5.i386.rpm 
+ perl-Parse-RecDescent-1.80-8.noarch.rpm  perl-DBI-1.30-1.i386.rpm 
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2003 System/Technology Development Corporation
+
